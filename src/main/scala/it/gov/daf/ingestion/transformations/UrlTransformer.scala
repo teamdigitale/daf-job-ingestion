@@ -16,27 +16,26 @@
 
 package it.gov.daf.ingestion.transformations
 
-import cats._, cats.data._
-import cats.implicits._
-
-import scala.language.postfixOps
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{ Column, DataFrame, Row, SQLContext }
+import org.apache.spark.sql.functions._
 
 import it.gov.daf.ingestion.model._
 
-object GenericTransformer {
+object UrlTransformer {
 
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
+  private val colPrefix = "__norm_"
 
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
+  def urlTransformer = GenericTransformer(urlFormatter)
 
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
-
-      Right(res)
+  val urlFormatter = { (data: DataFrame, colFormat: Format) =>
+    val colName = colFormat.name
+    def normalize(colName: String) :Column = {
+      val column = col(colName)
+      val urlSplit = split(col(colName), "http[s]*://")
+      when(size(urlSplit) > 1, column).otherwise(concat(lit("http://"), column))
     }
 
+    data.withColumn(s"$colPrefix$colName", normalize(colName))
   }
 
 }

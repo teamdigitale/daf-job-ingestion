@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 TEAM PER LA TRASFORMAZIONE DIGITALE
+ * Copyright 2017 - 2018 TEAM PER LA TRASFORMAZIONE DIGITALE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package it.gov.daf.ingestion
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import it.gov.daf.ingestion.transformations._
+import it.gov.daf.ingestion.transformations.DateTransformer._
 import java.sql.{Date, Timestamp}
 import Ingestion._
 import cats._,cats.data._
 import cats.implicits._
+import it.gov.daf.ingestion.model.Format
 
 class IngestionTest extends FunSuite with DataFrameSuiteBase {
 
@@ -33,14 +35,14 @@ class IngestionTest extends FunSuite with DataFrameSuiteBase {
     implicit val sess = sqlCtx.sparkSession
 
     val input1 = sc.parallelize(List(
-      ("",  Timestamp.valueOf("2015-01-01 00:00:00")),
-      ("b1",Timestamp.valueOf("2016-01-01 00:00:00")),
-      ("c1",Timestamp.valueOf("2017-01-01 00:00:00"))
+      ("",  "2015-01-01 00:00:00"),
+      ("b1","2016-01-01 00:00:00"),
+      ("c1","2017-01-01 00:00:00")
     )).toDF("key","value")
 
     val transformations: List[Transformation] =
-      List(GenericTransformer(nullChecker,  "norm_null").transform(List("key"))
-        , GenericTransformer(dateFormatter, "norm_date").transform(List("value"))
+      List(GenericTransformer(nullChecker).transform(List(Format("key", None, None, None)))
+        , dateTransformer.transform(List(Format("value", None, None, None)))
       )
 
     val output1 = transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(input1)

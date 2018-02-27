@@ -16,27 +16,23 @@
 
 package it.gov.daf.ingestion.transformations
 
-import cats._, cats.data._
-import cats.implicits._
-
-import scala.language.postfixOps
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.DataFrame
 
-import it.gov.daf.ingestion.model._
 
-object GenericTransformer {
+object RawSaver {
 
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
+  def rawSaver1: Transformation = {
+      // def transform(formats: List[Format])
+      // (implicit spark: SparkSession): Transformation = { data =>
 
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
+      //   data.withColumn(colName, colFormat.encoding.fold(col(colName)) (enc => encode(decode(col(colName), enc), "UTF-8")))
 
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
+      //   val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
 
-      Right(res)
-    }
 
+  ???
   }
+
 
 }

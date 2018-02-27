@@ -1,5 +1,8 @@
 import Versions._
+import de.heikoseeberger.sbtheader.license.Apache2_0
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
+
+// SparkSubmit.settings
 
 organization in ThisBuild := "it.gov.daf"
 name := "daf-job-ingestion"
@@ -46,27 +49,60 @@ val sparkExcludes =
     exclude("org.apache.hadoop", "hadoop-yarn-server-web-proxy").
     exclude("org.apache.zookeeper", "zookeeper").
     exclude("io.netty", "netty").
-    exclude("commons-collections", "commons-collections").
-    exclude("commons-beanutils", "commons-beanutils").
-    exclude("org.slf4j", "slf4j-log4j12")
+    // exclude("commons-collections", "commons-collections").
+    exclude("commons-beanutils", "commons-beanutils")
+    // exclude("org.slf4j", "slf4j-log4j12")
 
 def sparkDependencies(scope: String = "provided") = Seq(
   "spark-core",
   "spark-sql"
 ) map( c => sparkExcludes(spark %% c % sparkVersion % scope))
 
+
+lazy val circe = "io.circe"
+
+val circeDependencies = Seq(
+  "circe-core",
+  "circe-generic-extras",
+  "circe-parser"
+) map(circe %% _ % circeVersion)
+
+  lazy val sttp = "com.softwaremill.sttp"
+
+  val sttpDependencies = Seq(
+    "core",
+    "circe",
+    "okhttp-backend"
+  ) map(sttp %% _ % sttpVersion)
+
 parallelExecution in Test := false
 
+
+libraryDependencies ++= sttpDependencies
 libraryDependencies ++= sparkDependencies()
+libraryDependencies ++= circeDependencies
 // libraryDependencies += "org.typelevel" %% "cats-core" % catsVersion
 
-resolvers += Resolver.sonatypeRepo("releases")
+resolvers ++= Seq(
+  Resolver.mavenLocal,
+  "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/maven-public/",
+  "cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
+  "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/maven-public/"
+)
 
-val framelessVersion = "0.4.0"
 
 libraryDependencies ++= List(
   "org.typelevel" %% "frameless-cats"      % framelessVersion,
   "org.typelevel" %% "frameless-dataset"   % framelessVersion,
   "org.typelevel" %% "frameless-ml"      % framelessVersion,
+  "com.joestelmach" % "natty" % "0.13",
   "com.holdenkarau" %% "spark-testing-base" % "2.2.0_0.8.0" % "test",
   "org.apache.spark" %% "spark-hive"       % "2.2.0" % "test")
+
+headers := Map(
+  "sbt" -> Apache2_0("2017 - 2018", "TEAM PER LA TRASFORMAZIONE DIGITALE"),
+  "scala" -> Apache2_0("2017 - 2018", "TEAM PER LA TRASFORMAZIONE DIGITALE"),
+  "conf" -> Apache2_0("2017 - 2018", "TEAM PER LA TRASFORMAZIONE DIGITALE", "#"),
+  "properties" -> Apache2_0("2017 - 2018", "TEAM PER LA TRASFORMAZIONE DIGITALE", "#"),
+  "yaml" -> Apache2_0("2017 - 2018", "TEAM PER LA TRASFORMAZIONE DIGITALE", "#")
+)

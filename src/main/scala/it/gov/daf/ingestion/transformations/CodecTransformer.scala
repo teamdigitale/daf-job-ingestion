@@ -16,27 +16,21 @@
 
 package it.gov.daf.ingestion.transformations
 
-import cats._, cats.data._
-import cats.implicits._
-
-import scala.language.postfixOps
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{ DataFrame, Column }
+import org.apache.spark.sql.functions._
 
 import it.gov.daf.ingestion.model._
 
-object GenericTransformer {
+object CodecTransformer {
 
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
+  def codecTransformer = GenericTransformer(codecFormatter)
 
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
+  // TODO If there is no encoding, add a check for actual encoding or a guessing algorithm
+  private def codecFormatter(data: DataFrame, colFormat: Format)  = {
 
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
+    val colName = colFormat.name
 
-      Right(res)
-    }
-
+    data.withColumn(colName, colFormat.encoding.fold(col(colName)) (enc => encode(decode(col(colName), enc), "UTF-8")))
   }
 
 }

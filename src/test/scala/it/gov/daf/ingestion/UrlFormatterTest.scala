@@ -20,19 +20,25 @@ import it.gov.daf.ingestion.model.Format
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import it.gov.daf.ingestion.transformations._
+import it.gov.daf.ingestion.transformations.UrlTransformer._
 
-class GenericTest extends FunSuite with DataFrameSuiteBase {
-
-  test("simple test") {
+class UrlFormatterTest extends FunSuite with DataFrameSuiteBase {
+  test("urlFormatter test") {
     val sqlCtx = sqlContext
     import sqlCtx.implicits._
 
-    val input1 = sc.parallelize(List(1, 2, 3)).toDF
-    assertDataFrameEquals(input1, input1) // equal
-    val input2 = sc.parallelize(List(4, 5, 6)).toDF
-    intercept[org.scalatest.exceptions.TestFailedException] {
-      assertDataFrameEquals(input1, input2) // not equal
-    }
-  }
+    val colName = "url"
+    val colPrefix = "__norm_"
 
+    val input1 = sc.parallelize(List("www.google.com", "http://www.google.com", "https://www.google.com")).toDF(colName)
+
+    val output1 = urlFormatter(input1, Format(colName, None, None, None))
+
+    val expectedOutput1 = sc.parallelize(List(("www.google.com", "http://www.google.com"),
+      ("http://www.google.com", "http://www.google.com"),
+      ("https://www.google.com", "https://www.google.com"))).toDF(colName, s"$colPrefix$colName")
+
+    assertDataFrameEquals(output1, expectedOutput1)
+
+  }
 }

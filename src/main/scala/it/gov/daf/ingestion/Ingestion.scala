@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 TEAM PER LA TRASFORMAZIONE DIGITALE
+ * Copyright 2017 - 2018 TEAM PER LA TRASFORMAZIONE DIGITALE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package it.gov.daf.ingestion
 
 import cats._,cats.data._
 import cats.implicits._
-
+import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
+import io.circe.parser.decode
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 
-import catalog_manager.yaml._
 import it.gov.daf.ingestion.transformations._
+// import it.gov.daf.ingestion.transformations.RawSaver.rawSaver
 import it.gov.daf.ingestion.model._
 
 object Ingestion {
@@ -33,29 +34,15 @@ object Ingestion {
     .appName("Ingestion")
     .getOrCreate()
 
-  // This is the list of all possible transformations
-    val allTransformations: List[Transformer] =
-      List(GenericTransformer(nullChecker,  "norm_null")
-        , GenericTransformer(dateFormatter, "norm_date")
-        , GenericTransformer(urlFormatter,  "norm_url")
-        , Standardization
-      )
+  def ingest(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
 
-    def ingest(data: DataFrame, catalog: DatasetCatalog): Either[IngestionError, DataFrame] = {
+    val transformations: List[Transformation] =
+      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s => allTransformations(s.name).transform(s.formats))
 
-      // TBD this list will come from Catalog
-      val pipeline: List[String] = List("norm_null", "norm_date", "std_voc")
-
-      val transformations:List[Transformation] = allTransformations.filter(t => pipeline.contains(t.name)).map(_.transform(catalog))
-
-      transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(data)
-    }
-
+    transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(data)
+  }
 
   def main(args: Array[String]) = {
-
-    // TBD This will be the result of the parsing of the cmd line parameters
-    val dataCatalog: DatasetCatalog = DatasetCatalog(null, null, null)
 
     // TBD This will be the result of conversion from logical to physical URI
     val dsUri = ""
@@ -65,7 +52,7 @@ object Ingestion {
     /* TODO: Remove this
      *  This is only for testing the Kylo integration
      */
-    import java.sql.{Date, Timestamp}
+    import java.sql.Timestamp
     val sc = spark.sparkContext
     import spark.sqlContext.implicits._
 
@@ -76,8 +63,11 @@ object Ingestion {
     )).toDF("key","value")
     /******************************/
 
-    // TBD use actual DatasetCatalog
-    val transformed = ingest(data, dataCatalog)
+    // TBD use actual parameters
+    val transformed = for {
+      pipeline <- decode[Pipeline](args(0))
+      transfom <- ingest(data, pipeline)
+    } yield transfom
 
     transformed.foreach(_.write.format("parquet").save("/tmp/ingestionTest"))
 

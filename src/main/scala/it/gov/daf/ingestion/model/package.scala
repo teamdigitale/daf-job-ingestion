@@ -14,29 +14,12 @@
  * limitations under the License.
  */
 
-package it.gov.daf.ingestion.transformations
+package it.gov.daf.ingestion
 
-import cats._, cats.data._
-import cats.implicits._
+package object model {
 
-import scala.language.postfixOps
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
-
-import it.gov.daf.ingestion.model._
-
-object GenericTransformer {
-
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
-
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
-
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
-
-      Right(res)
-    }
-
-  }
+  type Steps = List[IngestionStep]
+  // val allTransformations: List[String] = List("text to utf-8", "empty values to null",
+    // "date to ISO8601", "add row id", "add ingestion date" ,"add update date")
 
 }

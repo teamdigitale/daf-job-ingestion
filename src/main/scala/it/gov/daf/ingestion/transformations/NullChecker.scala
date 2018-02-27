@@ -16,27 +16,30 @@
 
 package it.gov.daf.ingestion.transformations
 
+import java.text.SimpleDateFormat
+import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
+import org.apache.spark.sql.functions._
+import java.sql.{Date, Timestamp}
+import collection.JavaConverters._
+
 import cats._, cats.data._
 import cats.implicits._
-
-import scala.language.postfixOps
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
+import com.joestelmach.natty._
 
 import it.gov.daf.ingestion.model._
 
-object GenericTransformer {
+object NullChecker {
 
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
+  private val colAdded = "__norm_"
 
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
+  def nullTransformer = GenericTransformer(nullFormatter)
 
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
+  private def nullFormatter(data: DataFrame, colFormat: Format)  = {
+    val colName = colFormat.name
 
-      Right(res)
-    }
-
+    data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
+    // data.withColumn(s"${colAdded}$colName", date_format(timeUdf(col(colName)), "YYYY-MM-DD hh:mm:ss"))
   }
 
 }

@@ -7,3 +7,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-git-stamp" % "5.3.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.2.1")
 
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.8.0")
+
+addSbtPlugin("com.github.saurfang" % "sbt-spark-submit" % "0.0.4")

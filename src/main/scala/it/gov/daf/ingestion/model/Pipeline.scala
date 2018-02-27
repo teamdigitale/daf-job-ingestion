@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-package it.gov.daf.ingestion.transformations
+package it.gov.daf.ingestion.model
 
-import cats._, cats.data._
-import cats.implicits._
+import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
 
-import scala.language.postfixOps
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
+case class Format(name: String, vocabularyPath: Option[String], sourceDateFormat: Option[String]
+  , encoding: Option[String])
 
-import it.gov.daf.ingestion.model._
+case class IngestionStep(name: String, priority: Int, formats: List[Format])
 
-object GenericTransformer {
-
-  def apply(normalizer: DataTransformation): Transformer = new Transformer {
-
-    def transform(formats: List[Format])
-      (implicit spark: SparkSession): Transformation = { data =>
-
-      val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
-
-      Right(res)
-    }
-
-  }
-
-}
+case class Pipeline(datasetPath: String, steps: Steps)

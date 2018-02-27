@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 TEAM PER LA TRASFORMAZIONE DIGITALE
+ * Copyright 2017 - 2018 TEAM PER LA TRASFORMAZIONE DIGITALE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,24 @@
 
 package it.gov.daf.ingestion
 
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import org.apache.spark.sql.{ SparkSession, DataFrame }
+import org.apache.spark.sql.functions._
+
 import cats._, cats.data._
 import cats.implicits._
 
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
-
-import catalog_manager.yaml.DatasetCatalog
 import it.gov.daf.ingestion.model._
-import org.apache.spark.sql.functions._
+import it.gov.daf.ingestion.transformations.DateTransformer.dateTransformer
+import it.gov.daf.ingestion.transformations.NullChecker.nullTransformer
+import it.gov.daf.ingestion.transformations.CodecTransformer.codecTransformer
+import it.gov.daf.ingestion.transformations.UrlTransformer.urlTransformer
 
 package transformations {
 
   trait Transformer extends Serializable {
-    // TBD We have two signatures until we define the parameters
-    def transform(catalog: DatasetCatalog)(implicit spark: SparkSession): Transformation
-    def transform(columns: List[String])(implicit spark: SparkSession): Transformation
-    def name: String
+    def transform(formats: List[Format])(implicit spark: SparkSession): Transformation
   }
 
 }
@@ -43,18 +44,30 @@ package object transformations {
 
   type Transformation = DataFrame => TransformationResult
 
-  type DataTransformation = (DataFrame, String) => DataFrame
+  type DataTransformation = (DataFrame, Format) => DataFrame
 
-  val nullChecker = { (data: DataFrame, colName: String) =>
+  type Transformations = Map[String, Transformer]
+
+  val rawSaver: Transformation  =  { data =>
+    Right(data.columns.foldLeft(data)( (data, colName) =>
+      data.withColumn(s"__raw_$colName", col(colName))))
+  }
+
+  val commonTransformation: Transformation  =  { data =>
+    Right(data.withColumn("__ROWID", hash(data.columns.map(col):_*))
+      .withColumn("__dtcreated", hash(lit(LocalDateTime.now())))
+      .withColumn("__dtupdate", col("__dtcreated")))
+  }
+
+  val nullChecker = { (data: DataFrame, colFormat: Format) =>
+    val colName = colFormat.name
     data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
   }
 
-  val dateFormatter = { (data: DataFrame, colName: String) =>
-    data.withColumn(colName, date_format(col(colName), "YYYY-MM-DD hh:mm:ss"))
-  }
-
-  val urlFormatter = { (data: DataFrame, colName: String) =>
-    data.withColumn(colName, split(col(colName), "http[s]://"))
-  }
-
+  val allTransformations = Map(
+    "text to utf-8" -> codecTransformer,
+    "empty values to null" -> nullTransformer,
+    "date to ISO8601" -> dateTransformer,
+    "url normalizer" -> urlTransformer
+  )
 }
