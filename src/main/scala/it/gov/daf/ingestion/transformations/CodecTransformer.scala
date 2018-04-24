@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import com.typesafe.config.Config
 import org.apache.spark.sql.{ DataFrame, Column }
 import org.apache.spark.sql.functions._
 
@@ -23,14 +24,14 @@ import it.gov.daf.ingestion.model._
 
 object CodecTransformer {
 
-  def codecTransformer = GenericTransformer(codecFormatter)
+  def codecTransformer(implicit config: Config) = GenericTransformer(codecFormatter)
 
   // TODO If there is no encoding, add a check for actual encoding or a guessing algorithm
   private def codecFormatter(data: DataFrame, colFormat: Format)  = {
 
-    val colName = colFormat.name
+    val colName = colFormat.column
 
-    data.withColumn(colName, colFormat.encoding.fold(col(colName)) (enc => encode(decode(col(colName), enc), "UTF-8")))
+    data.withColumn(colName, colFormat.sourceEncoding.fold(col(colName)) (enc => decode(encode(col(colName), enc), "UTF-8")))
   }
 
 }

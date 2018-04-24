@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import com.typesafe.config.Config
 import java.text.SimpleDateFormat
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
@@ -33,10 +34,10 @@ object NullChecker {
 
   private val colAdded = "__norm_"
 
-  def nullTransformer = GenericTransformer(nullFormatter)
+  def nullTransformer(implicit config: Config) = GenericTransformer(nullFormatter)
 
   private def nullFormatter(data: DataFrame, colFormat: Format)  = {
-    val colName = colFormat.name
+    val colName = colFormat.column
 
     data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
     // data.withColumn(s"${colAdded}$colName", date_format(timeUdf(col(colName)), "YYYY-MM-DD hh:mm:ss"))

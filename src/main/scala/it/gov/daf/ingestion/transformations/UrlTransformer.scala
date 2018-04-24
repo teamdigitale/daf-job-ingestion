@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import com.typesafe.config.Config
 import org.apache.spark.sql.{ Column, DataFrame, Row, SQLContext }
 import org.apache.spark.sql.functions._
 
@@ -25,10 +26,10 @@ object UrlTransformer {
 
   private val colPrefix = "__norm_"
 
-  def urlTransformer = GenericTransformer(urlFormatter)
+  def urlTransformer(implicit config: Config) = GenericTransformer(urlFormatter)
 
   val urlFormatter = { (data: DataFrame, colFormat: Format) =>
-    val colName = colFormat.name
+    val colName = colFormat.column
     def normalize(colName: String) :Column = {
       val column = col(colName)
       val urlSplit = split(col(colName), "http[s]*://")

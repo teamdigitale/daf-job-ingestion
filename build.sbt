@@ -92,6 +92,7 @@ resolvers ++= Seq(
 
 
 libraryDependencies ++= List(
+  "com.typesafe" % "config" % "1.3.1",
   "org.typelevel" %% "frameless-cats"      % framelessVersion,
   "org.typelevel" %% "frameless-dataset"   % framelessVersion,
   "org.typelevel" %% "frameless-ml"      % framelessVersion,

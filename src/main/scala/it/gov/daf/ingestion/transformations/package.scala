@@ -18,6 +18,7 @@ package it.gov.daf.ingestion
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
+import com.typesafe.config.Config
 import org.apache.spark.sql.{ SparkSession, DataFrame }
 import org.apache.spark.sql.functions._
 
@@ -55,16 +56,16 @@ package object transformations {
 
   val commonTransformation: Transformation  =  { data =>
     Right(data.withColumn("__ROWID", hash(data.columns.map(col):_*))
-      .withColumn("__dtcreated", hash(lit(LocalDateTime.now())))
+      .withColumn("__dtcreated", lit(unix_timestamp))
       .withColumn("__dtupdate", col("__dtcreated")))
   }
 
   val nullChecker = { (data: DataFrame, colFormat: Format) =>
-    val colName = colFormat.name
+    val colName = colFormat.column
     data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
   }
 
-  val allTransformations = Map(
+  def getTransformations(implicit config: Config) = Map(
     "text to utf-8" -> codecTransformer,
     "empty values to null" -> nullTransformer,
     "date to ISO8601" -> dateTransformer,

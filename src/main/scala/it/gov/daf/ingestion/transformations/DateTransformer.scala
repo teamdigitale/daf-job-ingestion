@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import com.typesafe.config.Config
 import java.text.SimpleDateFormat
 import org.apache.spark.sql.types.TimestampType
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
@@ -34,10 +35,10 @@ object DateTransformer {
 
   private val colAdded = "__date_"
 
-  def dateTransformer = GenericTransformer(dateFormatter)
+  def dateTransformer(implicit config: Config) = GenericTransformer(dateFormatter)
 
   def dateFormatter(data: DataFrame, colFormat: Format)  = {
-    val colName = colFormat.name
+    val colName = colFormat.column
 
     def inferDate(date: String): Option[JDate] = {
       val parser = new Parser

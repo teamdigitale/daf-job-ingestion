@@ -16,15 +16,16 @@
 
 package it.gov.daf.ingestion
 
+import com.typesafe.config.ConfigFactory
 import cats._,cats.data._
 import cats.implicits._
 import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
 import io.circe.parser.decode
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 
 import it.gov.daf.ingestion.transformations._
-// import it.gov.daf.ingestion.transformations.RawSaver.rawSaver
 import it.gov.daf.ingestion.model._
 
 object Ingestion {
@@ -34,10 +35,17 @@ object Ingestion {
     .appName("Ingestion")
     .getOrCreate()
 
+  private def outputUri(uri: String) = {
+    val (pre, post) = uri.splitAt(uri.lastIndexOf("/"))
+    s"$pre/final$post"
+  }
+
   def ingest(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
 
+    val allTransformations = getTransformations(ConfigFactory.load)
+
     val transformations: List[Transformation] =
-      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s => allTransformations(s.name).transform(s.formats))
+      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s => allTransformations(s.name).transform(s.stepDetails))
 
     transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(data)
   }
@@ -46,6 +54,8 @@ object Ingestion {
 
     // TBD This will be the result of conversion from logical to physical URI
     val dsUri = ""
+
+    val postalUri: Broadcast[String]  = spark.sparkContext.broadcast(args(1))
 
     // val data = spark.read.parquet(dsUri).cache
 
@@ -63,13 +73,15 @@ object Ingestion {
     )).toDF("key","value")
     /******************************/
 
-    // TBD use actual parameters
     val transformed = for {
       pipeline <- decode[Pipeline](args(0))
+      data = spark.read.parquet(pipeline.datasetUri).cache
       transfom <- ingest(data, pipeline)
-    } yield transfom
+    } yield (transfom, outputUri(pipeline.datasetUri))
 
-    transformed.foreach(_.write.format("parquet").save("/tmp/ingestionTest"))
+    transformed.foreach {
+      case (data, uri) => data.write.format("parquet").save(uri)
+    }
 
     spark.stop()
   }

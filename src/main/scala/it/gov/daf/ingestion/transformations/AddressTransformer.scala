@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import com.typesafe.config.Config
 import java.text.SimpleDateFormat
 import cats._, cats.data._
 import cats.implicits._
@@ -39,16 +40,10 @@ object AddressTransformer {
 
   implicit val backend = OkHttpSyncBackend()
 
-  // type PostalAddress = List[AddressField]
-
-  case class PostalAddress(fields: List[AddressField]) {
-    def field(label: String): String = fields.find(_.label == label).fold("")(_.value)
-  }
-
   private val colAdded = "__address_"
-  val uri = uri"http://localhost:8080/parser"
 
-  def addressTransformer = GenericTransformer(addressFormatter)
+
+  def addressTransformer(implicit config: Config) = GenericTransformer(addressFormatter)
 
   private def convertError[A](err: Either[String, Either[Error,A]]): Either[ServiceError, A] = {
     err match {
@@ -58,9 +53,14 @@ object AddressTransformer {
     }
   }
 
-  def addressFields(body: PostalQuery): Either[ServiceError, List[AddressField]] = {
+  def addressFormatter(data: DataFrame, colFormat: Format)
+    (implicit config: Config)= {
+
+    val uriParam:String = config.getString("uri")
+
+    def addressFields(body: PostalQuery): Either[ServiceError, List[AddressField]] = {
     convertError { sttp
-      .post(uri)
+      .post(uri"$uriParam")
       .body(body)
       .response(asJson[List[AddressField]]).send().body }
   }
@@ -81,14 +81,12 @@ object AddressTransformer {
       } yield value
       value.fold("")(_.value)
     }
-    // ???
   }
 
   val addressFieldUdf = udf(extractField _, StringType)
 
-  def addressFormatter(data: DataFrame, colFormat: Format)  = {
-    val colName = colFormat.name
-    // val address = addressFields(PostalQuery(colFormat
+    val colName = colFormat.column
+
     val addressAdded = data.withColumn(s"${colAdded}$colName", addressUdf(col(colName)))
 
     addressAdded.withColumn(s"${colAdded}placename_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("road")))
