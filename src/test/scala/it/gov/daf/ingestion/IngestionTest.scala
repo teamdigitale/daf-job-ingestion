@@ -25,6 +25,7 @@ import Ingestion._
 import cats._,cats.data._
 import cats.implicits._
 import it.gov.daf.ingestion.model.Format
+import com.typesafe.config.Config
 
 class IngestionTest extends FunSuite with DataFrameSuiteBase {
 
@@ -33,6 +34,8 @@ class IngestionTest extends FunSuite with DataFrameSuiteBase {
     import sqlCtx.implicits._
 
     implicit val sess = sqlCtx.sparkSession
+
+    implicit val config: Config = null
 
     val input1 = sc.parallelize(List(
       ("",  "2015-01-01 00:00:00"),
