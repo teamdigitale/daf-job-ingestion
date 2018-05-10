@@ -1,0 +1,48 @@
+{
+  "datasetName": "data_std_test_1",
+  "datasetUri": "src/main/resources/data_std_test_1/",
+  "steps": [
+    {
+      "priority": 1,
+      "name": "standardization",
+      "stepDetails": [
+        {
+          "column": "licenza_code_1",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "code_level_1", "propHierarchy": ["code_level_1,label_level_1"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "licenza_label_1",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "label_level_1", "propHierarchy": ["code_level_1,label_level_1"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "licenza_code_2",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "code_level_2", "propHierarchy": ["code_level_1,label_level_1", "code_level_2,label_level_2"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": "UTF-8"
+        },
+        {
+          "column": "licenza_label_2",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "label_level_2", "propHierarchy": ["code_level_1,label_level_1", "code_level_2,label_level_2"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "licenza_code_3",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "code_level_3", "propHierarchy": ["code_level_1,label_level_1", "code_level_2,label_level_2", "code_level_3,label_level_3"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "licenza_label_3",
+          "standardization": {"vocUri": "daf://voc/TECH__scienza/voc_licenze", "vocPath": "src/main/resources/licences/", "vocProp": "label_level_3", "propHierarchy": ["code_level_1,label_level_1", "code_level_2,label_level_2", "code_level_3,label_level_3"], "colGroup": "licences"},
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        }
+      ]
+    }
+  ]
+}

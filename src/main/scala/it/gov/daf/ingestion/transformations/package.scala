@@ -30,6 +30,7 @@ import it.gov.daf.ingestion.transformations.DateTransformer.dateTransformer
 import it.gov.daf.ingestion.transformations.NullChecker.nullTransformer
 import it.gov.daf.ingestion.transformations.CodecTransformer.codecTransformer
 import it.gov.daf.ingestion.transformations.UrlTransformer.urlTransformer
+import it.gov.daf.ingestion.transformations.Standardization.transform
 
 package transformations {
 
@@ -69,6 +70,7 @@ package object transformations {
     "text to utf-8" -> codecTransformer,
     "empty values to null" -> nullTransformer,
     "date to ISO8601" -> dateTransformer,
-    "url normalizer" -> urlTransformer
+    "url normalizer" -> urlTransformer,
+    "standardization" -> Standardization
   )
 }

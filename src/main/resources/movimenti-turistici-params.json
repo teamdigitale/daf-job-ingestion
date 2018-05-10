@@ -1,0 +1,54 @@
+{
+  "datasetName": "test",
+  "datasetUri": "/daf/ordinary/default_org/EDUC__turismo/default_org_o_reg_sardegna_mov_turistici",
+  "steps": [
+    {
+      "priority": 1,
+      "name": "text to utf-8",
+      "stepDetails": [
+        {
+          "column": "provincia",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": "UTF-8"
+        },
+        {
+          "column": "macrotipologia",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": "UTF-8"
+        },
+        {
+          "column": "descrizione",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": "UTF-8"
+        }
+      ]
+    },
+    {
+      "priority": 2,
+      "name": "empty values to null",
+      "stepDetails": [
+        {
+          "column": "provincia",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "macrotipologia",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        },
+        {
+          "column": "descrizione",
+          "standardization": null,
+          "sourceDateFormat": null,
+          "sourceEncoding": null
+        }
+      ]
+    }
+  ]
+}

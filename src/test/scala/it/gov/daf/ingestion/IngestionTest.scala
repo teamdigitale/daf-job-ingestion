@@ -47,7 +47,7 @@ class IngestionTest extends FunSuite with DataFrameSuiteBase {
       List(GenericTransformer(nullChecker).transform(List(Format("key", None, None, None)))
         , dateTransformer.transform(List(Format("value", None, None, None)))
       )
-
+    /*_*/
     val output1 = transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(input1)
 
     output1.foreach(_.collect.foreach(println))

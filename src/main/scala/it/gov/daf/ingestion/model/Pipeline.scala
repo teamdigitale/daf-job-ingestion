@@ -18,9 +18,14 @@ package it.gov.daf.ingestion.model
 
 import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
 
-case class Format(column: String, vocabularyPath: Option[String], sourceDateFormat: Option[String]
+case class StdColInfo(vocUri: String, vocPath: String, vocProp: String, propHierarchy: List[String], colGroup: String) extends Serializable
+
+case class StdInfo(colnName: String, stdColInfo: StdColInfo)
+
+case class Format(column: String, standardization: Option[StdColInfo], sourceDateFormat: Option[String]
   , sourceEncoding: Option[String])
 
 case class IngestionStep(name: String, priority: Int, stepDetails: List[Format])
 
+//change datasetUri into datasetPath
 case class Pipeline(datasetName: String, datasetUri: String, steps: Steps)
