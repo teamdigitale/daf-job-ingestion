@@ -1,6 +1,6 @@
 dscode,dsname,numrows,licenza_code_1,licenza_label_1,licenza_code_2,licenza_label_2,licenza_code_3,licenza_label_3
-1,data1,10,A,Licenza Aperta,A.1,Dominio pubblico,A.1.1,	Creative Commons CC0 1.0 Universal - Public Domain Dedication (CC0 1.0)
+1,data1,10,A,Lizenzu Aperta,A.1,Dominio pubblico,A.1.1,	Creative Commons CC0 1.0 Universal - Public Domain Dedication (CC0 1.0)
 2,data2,11,A,Licenza Aperta,A.2,Attribuzione,A.2.4,Creative Commons Attribution 2.5 Generic (CC BY 2.5)
 3,data3,20,B,Licenza Non Aperta,B.1,Solo uso non commerciale,B.1.2,Creative Commons Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)
-4,data4,22,B,Licenza Non Aperta,B.1,Solo uso non commerciale,B.1.2,Creative Commons Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)
-5,data5,23,C,Licenza sconosciuta,C.1,Licenza sconosciuta,C.1.1,Licenza Sconosciuta
+4,data4,22,B,Licenza Non Aperta,B.1,Solo uso non commerciale,B.1.2,Creative Communi Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)
+5,data5,23,C,Licenza sconosciuta,CA.1,Licenza sconosciuta,C.1.1,Licenza Sconosciuta

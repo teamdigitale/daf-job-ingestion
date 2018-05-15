@@ -164,13 +164,19 @@ object Standardization extends Transformer {
       }
 
 
+
       //produce the dataframe with the result of stdInference function (standardized col + score)
-      val df_conv = data.select(colSelect_data.head, colSelect_data.tail: _*).distinct.map { x =>
+      val df_conv = data.select(colSelect_data.head, colSelect_data.tail.map(addedColVal + _): _*).distinct.map { x =>
         val xSeq: Seq[String] = x.toSeq.map(x=> x.asInstanceOf[String])
         if (xSeq.length >1) {
           val dataLinkedCol: Seq[String] = xSeq.tail.map(x=>x.asInstanceOf[String].toLowerCase)
           val voc_cust = voc_restr.filter(x=> x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail.equals(dataLinkedCol)).map(x=>x(0).asInstanceOf[String])
-          voc.map(x=> println(x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail))
+
+          println("colSelect_data: " + colSelect_data)
+          println("colSelect_voc: " + colSelect_voc)
+          println(voc_restr.mkString((",")))
+          println("________: " + voc_cust.mkString(","))
+          //voc.map(x=> println(x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail))
           doit("levenshtein")(xSeq.head, voc_cust)
         } else {
           val voc_cust = voc.map(x=>x(0).asInstanceOf[String])

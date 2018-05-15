@@ -1,6 +1,6 @@
 {
-  "datasetName": "data_std_test_1",
-  "datasetUri": "src/main/resources/data_std_test_1/",
+  "datasetName": "data_std_test_2",
+  "datasetUri": "src/main/resources/data_std_test_2/",
   "steps": [
     {
       "priority": 1,

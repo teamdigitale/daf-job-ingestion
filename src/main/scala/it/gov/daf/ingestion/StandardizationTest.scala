@@ -24,7 +24,7 @@ import io.circe.parser.decode
 import it.gov.daf.ingestion.model._
 import it.gov.daf.ingestion.transformations._
 import org.apache.spark.broadcast.Broadcast
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 import scala.io.Source
 
@@ -66,7 +66,8 @@ object StandardizationTest {
      */
 
     //Create data first
-    //createData()
+    createData()
+    //createDataVoc()
 
     //This is just for testing purposes. Need to be passed from outside
     val parameters = Source.fromURL(getClass.getClassLoader.getResource("StdLicenzeTest.json"))
@@ -83,11 +84,12 @@ object StandardizationTest {
 
     println(transformed.right.get._1.show())
 
-    /*
+
     transformed.foreach {
-      case (data, uri) => data.write.format("parquet").save(uri)
+      //case (data, uri) => data.write.format("parquet").save(uri)
+      case (data, uri) => data.write.mode(SaveMode.Overwrite).save("src/main/resources/output")
     }
-  */
+
 
     spark.stop()
     //println(decode[Pipeline](parameters.mkString))
@@ -108,12 +110,18 @@ object StandardizationTest {
     val data = spark.read.format("csv")
       .option("header", "true")
       .option("inferSchema", "true")
-      .load("src/main/resources/data_std_test_1.csv")
+      .load("src/main/resources/data_std_test_2.csv")
 
     data.printSchema()
 
-    data.write.save("src/main/resources/data_std_test_1")
+    data.write.mode(SaveMode.Overwrite).save("src/main/resources/data_std_test_2")
 
+  }
+
+  def createDataVoc() ={
+    import java.sql.Timestamp
+    val sc = spark.sparkContext
+    import spark.sqlContext.implicits._
 
     val voc_licenze = spark.read.format("csv")
       .option("header", "true")
@@ -122,12 +130,7 @@ object StandardizationTest {
 
     voc_licenze.printSchema()
 
-    voc_licenze.write.save("src/main/resources/licences")
-
-
-
-
-
+    voc_licenze.write.mode(SaveMode.Overwrite).save("src/main/resources/licences")
 
   }
 
