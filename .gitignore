@@ -4,3 +4,5 @@ project/target
 target
 .ensime
 *.log
+/src/main/resources/data_std_test_2/
+/src/main/resources/output/

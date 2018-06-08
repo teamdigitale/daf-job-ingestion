@@ -28,10 +28,11 @@ import it.gov.daf.ingestion.model._
 
 object GenericTransformer {
 
-  def apply(normalizer: DataTransformation)
-    (implicit config: Config): Transformer = new Transformer {
+  def apply[A <: Format](normalizer: DataTransformation[A])
+    // (implicit config: Config)
+      : Transformer[A] = new Transformer[A] {
 
-    def transform(formats: List[Format])
+    def transform(formats: List[A])
       (implicit spark: SparkSession): Transformation = { data =>
 
       val res: DataFrame = formats.foldLeft(data)(normalizer.apply)

@@ -24,10 +24,11 @@ import it.gov.daf.ingestion.model._
 
 object CodecTransformer {
 
-  def codecTransformer(implicit config: Config) = GenericTransformer(codecFormatter)
+  def codecTransformer// (implicit config: Config)
+  = GenericTransformer[CodecFormat](codecFormatter)
 
   // TODO If there is no encoding, add a check for actual encoding or a guessing algorithm
-  private def codecFormatter(data: DataFrame, colFormat: Format)  = {
+  private def codecFormatter(data: DataFrame, colFormat: CodecFormat)  = {
 
     val colName = colFormat.column
 

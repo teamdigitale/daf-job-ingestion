@@ -16,7 +16,7 @@
 
 package it.gov.daf.ingestion
 
-import it.gov.daf.ingestion.model.Format
+import it.gov.daf.ingestion.model.UrlFormat
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import it.gov.daf.ingestion.transformations._
@@ -32,7 +32,7 @@ class UrlFormatterTest extends FunSuite with DataFrameSuiteBase {
 
     val input1 = sc.parallelize(List("www.google.com", "http://www.google.com", "https://www.google.com")).toDF(colName)
 
-    val output1 = urlFormatter(input1, Format(colName, None, None, None))
+    val output1 = urlFormatter(input1, UrlFormat(colName))
 
     val expectedOutput1 = sc.parallelize(List(("www.google.com", "http://www.google.com"),
       ("http://www.google.com", "http://www.google.com"),

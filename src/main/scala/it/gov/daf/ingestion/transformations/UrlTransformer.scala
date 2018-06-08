@@ -26,9 +26,10 @@ object UrlTransformer {
 
   private val colPrefix = "__norm_"
 
-  def urlTransformer(implicit config: Config) = GenericTransformer(urlFormatter)
+  def urlTransformer// (implicit config: Config)
+  = GenericTransformer[UrlFormat](urlFormatter)
 
-  val urlFormatter = { (data: DataFrame, colFormat: Format) =>
+  val urlFormatter = { (data: DataFrame, colFormat: UrlFormat) =>
     val colName = colFormat.column
     def normalize(colName: String) :Column = {
       val column = col(colName)

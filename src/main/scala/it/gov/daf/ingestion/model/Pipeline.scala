@@ -20,12 +20,30 @@ import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io
 
 case class StdColInfo(vocUri: String, vocPath: String, vocProp: String, propHierarchy: List[String], colGroup: String) extends Serializable
 
-case class StdInfo(colnName: String, stdColInfo: StdColInfo)
+sealed trait Format extends Product with Serializable {
+  def column: String
+}
 
-case class Format(column: String, standardization: Option[StdColInfo], sourceDateFormat: Option[String]
-  , sourceEncoding: Option[String])
+case class StdFormat(column: String, colInfo: StdColInfo) extends Format
+case class DateFormat(column: String, sourceDateFormat: Option[String]) extends Format
+case class UrlFormat(column: String) extends Format
+case class AddressFormat(column: String) extends Format
+case class CodecFormat(column: String, sourceEncoding: Option[String]) extends Format
+case class NullFormat(column: String) extends Format
 
 case class IngestionStep(name: String, priority: Int, stepDetails: List[Format])
 
-//change datasetUri into datasetPath
-case class Pipeline(datasetName: String, datasetUri: String, steps: Steps)
+case class Pipeline(datasetName: String, datasetPath: String, steps: Steps)
+
+// Sample value
+
+// val pipeline = Pipeline(datasetName = "data_std_test_2",
+//   datasetPath = "src/main/resources/data_std_test_2/",
+//   steps = List(IngestionStep(priority = 1, name = "standardization",
+//     stepDetails = List(
+//       StdFormat(column = "licenza_code_1",
+//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences")),
+//       StdFormat(column = "licenza_code_2",
+//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences")),
+//       StdFormat(column = "licenza_code_3",
+//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences"))))))

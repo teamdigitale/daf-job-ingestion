@@ -30,6 +30,7 @@ import io.circe._, io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.generic.JsonCodec, io.circe.syntax._
 import it.gov.daf.ingestion.model._
+import it.gov.daf.ingestion.services._
 
 
 case class AddressField(label: String, value: String)
@@ -42,16 +43,7 @@ object AddressTransformer {
 
   private val colAdded = "__address_"
 
-
   def addressTransformer(implicit config: Config) = GenericTransformer(addressFormatter)
-
-  private def convertError[A](err: Either[String, Either[Error,A]]): Either[ServiceError, A] = {
-    err match {
-      case Left(error)        => Left(EndpointError(error))
-      case Right(Left(error)) => Left(ResponseError(error))
-      case Right(Right(a))    => Right(a)
-    }
-  }
 
   def addressFormatter(data: DataFrame, colFormat: Format)
     (implicit config: Config)= {
@@ -77,7 +69,7 @@ object AddressTransformer {
     else {
       val value = for {
         fields <- io.circe.parser.decode[List[AddressField]](address).toOption
-        value <- fields.find(_.label == label)
+        value  <- fields.find(_.label == label)
       } yield value
       value.fold("")(_.value)
     }

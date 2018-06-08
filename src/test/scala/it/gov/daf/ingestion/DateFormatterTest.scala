@@ -19,7 +19,7 @@ package it.gov.daf.ingestion
 import java.sql.{Date, Timestamp}
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
-import it.gov.daf.ingestion.model.Format
+import it.gov.daf.ingestion.model.DateFormat
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.transformations.DateTransformer._
 
@@ -34,7 +34,7 @@ class DateFormatterTest extends FunSuite with DataFrameSuiteBase {
 
     input1.collect.foreach(println)
 
-    val output1 = dateFormatter(input1, Format("value", None, Some("YYYY-MM-DD hh:mm:ss"), None))
+    val output1 = dateFormatter(input1, DateFormat("value", Some("YYYY-MM-DD hh:mm:ss")))
 
     output1.printSchema()
     output1.collect.foreach(println)

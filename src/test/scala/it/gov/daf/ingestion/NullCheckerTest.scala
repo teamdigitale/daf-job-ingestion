@@ -16,7 +16,7 @@
 
 package it.gov.daf.ingestion
 
-import it.gov.daf.ingestion.model.Format
+import it.gov.daf.ingestion.model.NullFormat
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import it.gov.daf.ingestion.transformations._
@@ -29,7 +29,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val input1 = sc.parallelize(List("a", "b", "c")).toDF("value")
 
-    val output1 = nullChecker(input1, Format("value", None, None, None))
+    val output1 = nullChecker(input1, NullFormat("value"))
 
     assertDataFrameEquals(input1, output1)
 
@@ -37,7 +37,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput2 = sc.parallelize(List(null, "b", "c")).toDF("value")
 
-    val output2 = nullChecker(input2, Format("value", None, None, None))
+    val output2 = nullChecker(input2, NullFormat("value"))
 
     assertDataFrameEquals(output2, expectedOutput2)
 
@@ -45,7 +45,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput3 = sc.parallelize(List((null,null), ("b1","b2"), ("c1","c2"))).toDF("key","value")
 
-    val output3 = nullChecker(nullChecker(input3, Format("value", None, None, None)), Format("key", None, None, None))
+    val output3 = nullChecker(nullChecker(input3, NullFormat("value")), NullFormat("key"))
 
     assertDataFrameEquals(output3, expectedOutput3)
 
@@ -53,7 +53,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput4 = sc.parallelize(List((null,"a2"), ("b1",null), ("c1","c2"))).toDF("key","value")
 
-    val output4 = nullChecker(nullChecker(input4, Format("value", None, None, None)), Format("key", None, None, None))
+    val output4 = nullChecker(nullChecker(input4, NullFormat("value")), NullFormat("key"))
 
     assertDataFrameEquals(output4, expectedOutput4)
 

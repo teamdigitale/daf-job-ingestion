@@ -49,7 +49,8 @@ val sparkExcludes =
     exclude("org.apache.hadoop", "hadoop-yarn-server-web-proxy").
     exclude("org.apache.zookeeper", "zookeeper").
     exclude("io.netty", "netty").
-    // exclude("commons-collections", "commons-collections").
+    // exclude("com.fasterxml.jackson.core", "jackson-databind").
+  // exclude("commons-collections", "commons-collections").
     exclude("commons-beanutils", "commons-beanutils")
     // exclude("org.slf4j", "slf4j-log4j12")
 
@@ -58,6 +59,8 @@ def sparkDependencies(scope: String = "provided") = Seq(
   "spark-sql"
 ) map( c => sparkExcludes(spark %% c % sparkVersion % scope))
 
+dependencyOverrides += "com.google.guava" % "guava" % "16.0.1" % "compile"
+dependencyOverrides += "org.asynchttpclient" % "async-http-client" % "2.0.38"
 
 lazy val circe = "io.circe"
 
@@ -67,31 +70,42 @@ val circeDependencies = Seq(
   "circe-parser"
 ) map(circe %% _ % circeVersion)
 
-  lazy val sttp = "com.softwaremill.sttp"
+lazy val sttp = "com.softwaremill.sttp"
 
-  val sttpDependencies = Seq(
+val sttpDependencies = Seq(
     "core",
     "circe",
-    "okhttp-backend"
+    "okhttp-backend",
+    "async-http-client-backend-monix"
   ) map(sttp %% _ % sttpVersion)
+
+lazy val monix = "io.monix"
+
+  val monixDependencies = Seq(
+    "monix"
+  ) map(monix %% _ % monixVersion)
 
 parallelExecution in Test := false
 
 
 libraryDependencies ++= sttpDependencies
 libraryDependencies ++= sparkDependencies()
+libraryDependencies ++= monixDependencies
 libraryDependencies ++= circeDependencies
 // libraryDependencies += "org.typelevel" %% "cats-core" % catsVersion
 
 resolvers ++= Seq(
   Resolver.mavenLocal,
-  "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/maven-public/",
-  "cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
-  "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/maven-public/"
+  // "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/mavens-public/",
+  "cloudera" at "https://repository.cloudera.com/artifactory/cloudera-repos/"
+    // "daf repo" at "http://nexus.default.svc.cluster.local:8081/repository/maven-public/"
 )
 
 
 libraryDependencies ++= List(
+  "it.gov.daf" %% "daf-catalog-manager-client" % Versions.dafCatalogVersion exclude("com.fasterxml.jackson.core", "jackson-databind"),
+  // "it.gov.daf" %% "common" % Versions.dafCommonVersion,
+  "com.github.pureconfig" %% "pureconfig" % pureconfigVersion,
   "com.typesafe" % "config" % "1.3.1",
   "org.typelevel" %% "frameless-cats"      % framelessVersion,
   "org.typelevel" %% "frameless-dataset"   % framelessVersion,

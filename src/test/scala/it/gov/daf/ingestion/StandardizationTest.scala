@@ -32,10 +32,10 @@ class StandardizationTest extends FunSuite with DataFrameSuiteBase {
 
     input1.collect.foreach(println)
 
-    val output1 = dateFormatter(input1, Format("value", None, Some("YYYY-MM-DD hh:mm:ss"), None))
+    // val output1 = dateFormatter(input1, Format("value", None, Some("YYYY-MM-DD hh:mm:ss"), None))
 
-    output1.printSchema()
-    output1.collect.foreach(println)
+    // output1.printSchema()
+    // output1.collect.foreach(println)
 
     assertDataFrameEquals(input1, input1)
 

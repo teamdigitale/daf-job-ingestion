@@ -16,10 +16,20 @@
 
 package it.gov.daf.ingestion
 
+import pureconfig._
+
 package object model {
 
   type Steps = List[IngestionStep]
   // val allTransformations: List[String] = List("text to utf-8", "empty values to null",
     // "date to ISO8601", "add row id", "add ingestion date" ,"add update date")
+
+  val ServicesConfigKey = "services"
+  val UserConfigKey = "user"
+
+  case class ServicesUrls(catalogManagerUrl: String, addressTransformerUrl: String)
+  case class User(login: String, password: String)
+
+  implicit def hint[T] = ProductHint[T](ConfigFieldMapping(CamelCase, CamelCase))
 
 }

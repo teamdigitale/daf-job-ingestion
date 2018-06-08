@@ -25,6 +25,8 @@ import it.gov.daf.ingestion.model._
 import it.gov.daf.ingestion.transformations._
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import pureconfig.loadConfig
+import com.typesafe.config.ConfigFactory
 
 import scala.io.Source
 
@@ -44,6 +46,8 @@ object StandardizationTest {
   def ingest(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
 
     val allTransformations = getTransformations(ConfigFactory.load)
+    println(s"pipeline: $pipeline")
+    // val allTransformations = getTransformations(ConfigFactory.load)
 
     val transformations: List[Transformation] =
       rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s => allTransformations(s.name).transform(s.stepDetails))
@@ -78,11 +82,12 @@ object StandardizationTest {
       //pipeline <- decode[Pipeline](args(0))
       //data = spark.read.parquet(pipeline.datasetUri).cache
       pipeline <- decode[Pipeline](parameters.mkString)
-      data = spark.read.parquet(pipeline.datasetUri).cache
+      data = spark.read.parquet(pipeline.datasetPath).cache
       transfom <- ingest(data, pipeline)
-    } yield (transfom, outputUri(pipeline.datasetUri))
+    } yield (transfom, outputUri(pipeline.datasetPath))
 
-    println(transformed.right.get._1.show())
+    // println(transformed.right.get._1.show())
+    println(transformed)
 
 
     transformed.foreach {

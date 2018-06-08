@@ -24,7 +24,7 @@ import java.sql.{Date, Timestamp}
 import Ingestion._
 import cats._,cats.data._
 import cats.implicits._
-import it.gov.daf.ingestion.model.Format
+import it.gov.daf.ingestion.model.{ NullFormat, DateFormat }
 import com.typesafe.config.Config
 
 class IngestionTest extends FunSuite with DataFrameSuiteBase {
@@ -44,8 +44,8 @@ class IngestionTest extends FunSuite with DataFrameSuiteBase {
     )).toDF("key","value")
 
     val transformations: List[Transformation] =
-      List(GenericTransformer(nullChecker).transform(List(Format("key", None, None, None)))
-        , dateTransformer.transform(List(Format("value", None, None, None)))
+      List(GenericTransformer[NullFormat](nullChecker).transform(List(NullFormat("key")))
+        , dateTransformer.transform(List(DateFormat("value", None)))
       )
     /*_*/
     val output1 = transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(input1)

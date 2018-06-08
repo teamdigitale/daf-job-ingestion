@@ -34,7 +34,8 @@ object NullChecker {
 
   private val colAdded = "__norm_"
 
-  def nullTransformer(implicit config: Config) = GenericTransformer(nullFormatter)
+  def nullTransformer// (implicit config: Config)
+  = GenericTransformer[NullFormat](nullFormatter)
 
   private def nullFormatter(data: DataFrame, colFormat: Format)  = {
     val colName = colFormat.column

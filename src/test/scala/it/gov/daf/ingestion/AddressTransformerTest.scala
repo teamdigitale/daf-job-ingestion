@@ -16,7 +16,7 @@
 
 package it.gov.daf.ingestion
 
-import it.gov.daf.ingestion.model.Format
+import it.gov.daf.ingestion.model.AddressFormat
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import it.gov.daf.ingestion.transformations._
@@ -24,6 +24,7 @@ import it.gov.daf.ingestion.transformations.AddressTransformer._
 import com.typesafe.config.Config
 
 class AddressTransformerTest extends FunSuite with DataFrameSuiteBase {
+
   test("addressTransformer test") {
     val sqlCtx = sqlContext
     import sqlCtx.implicits._
@@ -37,7 +38,7 @@ class AddressTransformerTest extends FunSuite with DataFrameSuiteBase {
       "Corso V. Emanuele, 2 Sant'angelo dei lombardi Roccapriora 00100 Italia")).toDF(colName)
 
     // TBD
-    // val output1 = addressFormatter(input1, Format(colName, None, None, None))
+    // val output1 = addressFormatter(input1, AddressFormat(colName))
 
     val output1 = input1
 

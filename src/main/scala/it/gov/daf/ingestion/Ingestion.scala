@@ -16,7 +16,12 @@
 
 package it.gov.daf.ingestion
 
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
+import monix.execution.Scheduler.Implicits.global
+import pureconfig.loadConfig
 import com.typesafe.config.ConfigFactory
+import cats.data.EitherT._
 import cats._,cats.data._
 import cats.implicits._
 import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
@@ -24,11 +29,18 @@ import io.circe.parser.decode
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
+import monix.eval.Task
 
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.model._
+import it.gov.daf.ingestion.client.CatalogClient
+import it.gov.daf.ingestion.client.CatalogCaller._
+import it.gov.daf.catalogmanager.MetaCatalog
+import it.gov.daf.ingestion.PipelineBuilder._
 
 object Ingestion {
+
+  type Ingestion[A] = EitherT[Task, IngestionError, A]
 
   implicit val spark = SparkSession
     .builder
@@ -40,20 +52,27 @@ object Ingestion {
     s"$pre/final$post"
   }
 
+
   def ingest(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
 
     val allTransformations = getTransformations(ConfigFactory.load)
 
     val transformations: List[Transformation] =
-      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s => allTransformations(s.name).transform(s.stepDetails))
+      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s =>
+        allTransformations(s.name).transform(s.stepDetails))
 
     transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(data)
   }
 
   def main(args: Array[String]) = {
 
+    val sc = spark.sparkContext
+    import spark.sqlContext.implicits._
+
+    import monix.eval.Task
+
     // TBD This will be the result of conversion from logical to physical URI
-    val dsUri = ""
+    val dsUri = args(0)
 
     val postalUri: Broadcast[String]  = spark.sparkContext.broadcast(args(1))
 
@@ -63,9 +82,6 @@ object Ingestion {
      *  This is only for testing the Kylo integration
      */
     import java.sql.Timestamp
-    val sc = spark.sparkContext
-    import spark.sqlContext.implicits._
-
     val data = sc.parallelize(List(
       ("",  Timestamp.valueOf("2015-01-01 00:00:00")),
       ("b1",Timestamp.valueOf("2016-01-01 00:00:00")),
@@ -73,16 +89,23 @@ object Ingestion {
     )).toDF("key","value")
     /******************************/
 
-    val transformed = for {
-      pipeline <- decode[Pipeline](args(0))
-      data = spark.read.parquet(pipeline.datasetUri).cache
-      transfom <- ingest(data, pipeline)
-    } yield (transfom, outputUri(pipeline.datasetUri))
 
-    transformed.foreach {
-      case (data, uri) => data.write.format("parquet").save(uri)
+    def transf(catalog: MetaCatalog): Either[IngestionError,(DataFrame, String)] = for {
+      pipeline <- buildPipeline(catalog)
+      data = spark.read.parquet(pipeline.datasetPath).cache
+      transfom <- ingest(data, pipeline)
+    } yield (transfom, outputUri(pipeline.datasetPath))
+
+    val transformed: Ingestion[(DataFrame, String)] =
+      catalog(dsUri) >>= { cat => fromEither[Task](transf(cat)) }
+
+    transformed.value.foreach {_.fold(
+      l => println(s"left: $l"),
+      r => r._1.write.format("parquet").save(r._2)
+    )
     }
 
     spark.stop()
   }
+
 }

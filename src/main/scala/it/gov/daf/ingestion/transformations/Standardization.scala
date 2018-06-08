@@ -31,8 +31,7 @@ import scala.math.min
 
 case class TagOntology(colName: String, hierarchy: String, vocName: String, ontoTag: Map[String, String]) extends Serializable
 
-object Standardization extends Transformer {
-
+object Standardization extends Transformer[StdFormat] {
 
   type Columns = List[String]
   type OntoTag = Map[String, String]
@@ -65,16 +64,14 @@ object Standardization extends Transformer {
   val name = "std_voc"
 
 
-  def transform(columns: List[Format])(implicit spark: SparkSession): Transformation = {
-
-    val colStd: List[StdInfo] = columns.filter(_.standardization.isDefined).map(x => StdInfo(x.column, x.standardization.get))
+  def transform(columns: List[StdFormat])(implicit spark: SparkSession): Transformation = {
 
     // TODO Order colStd using the number of times a voc is used.
 
-    transform(colStd, "ciao", spark)
+    transform(columns, "ciao", spark)
   }
 
-  def transform(stdInfoList: List[StdInfo], test: String,
+  def transform(stdInfoList: List[StdFormat], test: String,
     spark: SparkSession): Transformation = { data =>
 
     println("Std - transform")
@@ -83,7 +80,7 @@ object Standardization extends Transformer {
     //import spark.implicits._
 
     //Calculate involved Vocabularies, calculate occurrencies, and remove duplicate
-    val dicInvolved = stdInfoList.map(x => (x.stdColInfo.vocUri, x.stdColInfo.vocPath))
+    val dicInvolved = stdInfoList.map(x => (x.colInfo.vocUri, x.colInfo.vocPath))
         .groupBy(x=>x).map(x=>(x._1, x._2.size))
 
 
@@ -96,31 +93,31 @@ object Standardization extends Transformer {
     val vocs: Broadcast[Map[String,Array[Row]]]  = spark.sparkContext.broadcast(vocLoc)
 
     //Get the ordered list of column and info from which to start the standardization procedure
-    val stdInfoListOrdered = stdInfoList.sortBy(x=> (dicInvolved((x.stdColInfo.vocUri, x.stdColInfo.vocPath)), x.stdColInfo.vocUri, x.stdColInfo.propHierarchy.size)).to[List]
+    val stdInfoListOrdered = stdInfoList.sortBy(x=> (dicInvolved((x.colInfo.vocUri, x.colInfo.vocPath)), x.colInfo.vocUri, x.colInfo.propHierarchy.size)).to[List]
+    println(s"stdInfoListOrdered: $stdInfoListOrdered")
 
-
-    def standardize(data: DataFrame, stdInfo: StdInfo): DataFrame = {
+    def standardize(data: DataFrame, stdInfo: StdFormat): DataFrame = {
       println("Std - standardize: " + stdInfo)
 
       //Prepare Info needed for the procedure
 
       //Get the name of the column to standardize
-      val colName2Std = stdInfo.colnName
+      val colName2Std = stdInfo.column
 
       //Get the hierarchy of the corresponding voc column
-      val hierarchy = stdInfo.stdColInfo.propHierarchy.toList
+      val hierarchy = stdInfo.colInfo.propHierarchy.toList
 
       //Get the voc property related to the column 2 std
-      val vocProp = stdInfo.stdColInfo.vocProp
+      val vocProp = stdInfo.colInfo.vocProp
 
       //Get the colGroup keyword
-      val colGroup = stdInfo.stdColInfo.colGroup
+      val colGroup = stdInfo.colInfo.colGroup
 
       //Get the involved vocabulary
-      val voc = vocs.value(stdInfo.stdColInfo.vocUri)
+      val voc = vocs.value(stdInfo.colInfo.vocUri)
 
       //Transform this in Map for easiest use in the procedure
-      val stdInfoMap = stdInfoListOrdered.map(x => (x.colnName -> x.stdColInfo)).toMap
+      val stdInfoMap = stdInfoListOrdered.map(x => (x.column -> x.colInfo)).toMap
 
       //Get the list of columns that have been already standardized and are in ther hierarchy of the element we want to standardize
       val colLinkedNames: List[String] =

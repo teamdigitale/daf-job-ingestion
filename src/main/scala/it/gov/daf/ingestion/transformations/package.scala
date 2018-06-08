@@ -30,12 +30,13 @@ import it.gov.daf.ingestion.transformations.DateTransformer.dateTransformer
 import it.gov.daf.ingestion.transformations.NullChecker.nullTransformer
 import it.gov.daf.ingestion.transformations.CodecTransformer.codecTransformer
 import it.gov.daf.ingestion.transformations.UrlTransformer.urlTransformer
+import it.gov.daf.ingestion.transformations.AddressTransformer.addressTransformer
 import it.gov.daf.ingestion.transformations.Standardization.transform
 
 package transformations {
 
-  trait Transformer extends Serializable {
-    def transform(formats: List[Format])(implicit spark: SparkSession): Transformation
+  trait Transformer[A <: Format] extends Serializable {
+    def transform(formats: List[A])(implicit spark: SparkSession): Transformation
   }
 
 }
@@ -46,9 +47,10 @@ package object transformations {
 
   type Transformation = DataFrame => TransformationResult
 
-  type DataTransformation = (DataFrame, Format) => DataFrame
+  type DataTransformation[A] = (DataFrame, A) => DataFrame
+  // type DataTransformation = (DataFrame, Format) => DataFrame
 
-  type Transformations = Map[String, Transformer]
+  // type Transformations = Map[String, Transformer]
 
   val rawSaver: Transformation  =  { data =>
     Right(data.columns.foldLeft(data)( (data, colName) =>
@@ -61,16 +63,17 @@ package object transformations {
       .withColumn("__dtupdate", col("__dtcreated")))
   }
 
-  val nullChecker = { (data: DataFrame, colFormat: Format) =>
+  val nullChecker = { (data: DataFrame, colFormat: NullFormat) =>
     val colName = colFormat.column
     data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
   }
 
-  def getTransformations(implicit config: Config) = Map(
+  def getTransformations(implicit config: Config) : Map[String, Transformer[Format]] = Map(
     "text to utf-8" -> codecTransformer,
     "empty values to null" -> nullTransformer,
     "date to ISO8601" -> dateTransformer,
     "url normalizer" -> urlTransformer,
+    "address normalizer" -> addressTransformer,
     "standardization" -> Standardization
-  )
+  ).mapValues(_.asInstanceOf[Transformer[Format]])
 }

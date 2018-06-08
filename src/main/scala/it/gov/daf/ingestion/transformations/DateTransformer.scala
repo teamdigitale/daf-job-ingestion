@@ -35,9 +35,10 @@ object DateTransformer {
 
   private val colAdded = "__date_"
 
-  def dateTransformer(implicit config: Config) = GenericTransformer(dateFormatter)
+  def dateTransformer// (implicit config: Config)
+  = GenericTransformer[DateFormat](dateFormatter)
 
-  def dateFormatter(data: DataFrame, colFormat: Format)  = {
+  def dateFormatter(data: DataFrame, colFormat: DateFormat)  = {
     val colName = colFormat.column
 
     def inferDate(date: String): Option[JDate] = {

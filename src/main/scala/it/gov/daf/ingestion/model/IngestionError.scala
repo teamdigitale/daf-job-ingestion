@@ -17,10 +17,15 @@
 package it.gov.daf.ingestion.model
 
 import io.circe.Error
+import pureconfig.error.ConfigReaderFailures
 
 trait IngestionError extends Throwable with Product with Serializable {
   def error: String
   override def toString = error
+}
+
+case class ConfigError(configError: ConfigReaderFailures) extends IngestionError {
+  def error = configError.head.description
 }
 
 case class AuthenticationError(error: String) extends IngestionError
