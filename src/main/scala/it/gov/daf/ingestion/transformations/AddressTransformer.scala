@@ -31,6 +31,7 @@ import io.circe.parser._
 import io.circe.generic.JsonCodec, io.circe.syntax._
 import it.gov.daf.ingestion.model._
 import it.gov.daf.ingestion.services._
+import it.gov.daf.ingestion.utilities._
 
 
 case class AddressField(label: String, value: String)
@@ -48,18 +49,18 @@ object AddressTransformer {
   def addressFormatter(data: DataFrame, colFormat: Format)
     (implicit config: Config)= {
 
-    val uriParam:String = config.getString("uri")
+    val uriParam: String = config.getString("services.addressTransformerUrl")
 
     def addressFields(body: PostalQuery): Either[ServiceError, List[AddressField]] = {
-    convertError { sttp
-      .post(uri"$uriParam")
-      .body(body)
-      .response(asJson[List[AddressField]]).send().body }
-  }
+      convertError { sttp
+        .post(uri"$uriParam")
+        .body(body)
+        .response(asJson[List[AddressField]]).send().body }
+    }
 
-  def resolveAddress: String => String = { field =>
-    addressFields(PostalQuery(field)).map(_.asJson.toString).getOrElse("")
-  }
+    def resolveAddress: String => String = { field =>
+      Option(field).flatMap( f => addressFields(PostalQuery(f)).toOption).map(_.asJson.toString).getOrElse("")
+    }
 
   val addressUdf = udf(resolveAddress, StringType)
 
@@ -78,14 +79,15 @@ object AddressTransformer {
   val addressFieldUdf = udf(extractField _, StringType)
 
     val colName = colFormat.column
+    val parsedCol = s"${colAdded}parseResult_$colName"
 
-    val addressAdded = data.withColumn(s"${colAdded}$colName", addressUdf(col(colName)))
+    val addressAdded = data.withColumn(parsedCol, addressUdf(col(colName)))
 
-    addressAdded.withColumn(s"${colAdded}placename_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("road")))
-      .withColumn(s"${colAdded}cityname_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("city")))
-      .withColumn(s"${colAdded}postcode_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("postcode")))
-      .withColumn(s"${colAdded}provname_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("state_district")))
-      .withColumn(s"${colAdded}countryname_$colName", addressFieldUdf(col(s"${colAdded}$colName"), lit("country")))
+    addressAdded.withColumn(s"${colAdded}placename_$colName", addressFieldUdf(col(parsedCol), lit("road")))
+      .withColumn(s"${colAdded}cityname_$colName", addressFieldUdf(col(parsedCol), lit("city")))
+      .withColumn(s"${colAdded}postcode_$colName", addressFieldUdf(col(parsedCol), lit("postcode")))
+      .withColumn(s"${colAdded}provname_$colName", addressFieldUdf(col(parsedCol), lit("state_district")))
+      .withColumn(s"${colAdded}countryname_$colName", addressFieldUdf(col(parsedCol), lit("country")))
   }
 
 }

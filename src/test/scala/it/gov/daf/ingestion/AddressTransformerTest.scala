@@ -16,41 +16,36 @@
 
 package it.gov.daf.ingestion
 
-import it.gov.daf.ingestion.model.AddressFormat
+import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
+import it.gov.daf.ingestion.model.AddressFormat
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.transformations.AddressTransformer._
-import com.typesafe.config.Config
+
+import utilities.MockData._
 
 class AddressTransformerTest extends FunSuite with DataFrameSuiteBase {
 
   test("addressTransformer test") {
     val sqlCtx = sqlContext
     import sqlCtx.implicits._
-    implicit val config: Config = null
+    implicit val config: Config = ConfigFactory.load
 
-    val colName = "url"
-    val colPrefix = "__norm_"
+    val colName = "address"
 
-    val input1 = sc.parallelize(List("piazza della vergine Immacolata 00144 Roma (ROMA) Lazio Italia",
+    val input = sc.parallelize(List("piazza della vergine Immacolata 00144 Roma (ROMA) Lazio Italia",
       "via piave, 25 Rocca di papa (RM)",
       "Corso V. Emanuele, 2 Sant'angelo dei lombardi Roccapriora 00100 Italia")).toDF(colName)
 
-    // TBD
-    // val output1 = addressFormatter(input1, AddressFormat(colName))
+    val output = addressFormatter(input, AddressFormat(colName))
 
-    val output1 = input1
+    val expectedOutput = sc.parallelize(expectedAddress)
+      .toDF("address", "__address_parseResult_address", "__address_placename_address", "__address_cityname_address",
+        "__address_postcode_address", "__address_provname_address", "__address_countryname_address" )
 
-    output1.printSchema()
-    output1.collect.foreach(println)
-
-    val expectedOutput1 = sc.parallelize(List(("www.google.com", "http://www.google.com"),
-      ("http://www.google.com", "http://www.google.com"),
-      ("https://www.google.com", "https://www.google.com"))).toDF(colName, s"$colPrefix$colName")
-
-    // assertDataFrameEquals(output1, expectedOutput1)
-    assertDataFrameEquals(output1, output1)
+    assertDataFrameEquals(output, expectedOutput)
 
   }
 }

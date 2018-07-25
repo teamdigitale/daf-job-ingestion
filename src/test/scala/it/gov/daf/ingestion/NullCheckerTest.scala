@@ -29,7 +29,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val input1 = sc.parallelize(List("a", "b", "c")).toDF("value")
 
-    val output1 = nullChecker(input1, NullFormat("value"))
+    val output1 = nullChecker(input1, NullFormat("value", List("", " ")))
 
     assertDataFrameEquals(input1, output1)
 
@@ -37,7 +37,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput2 = sc.parallelize(List(null, "b", "c")).toDF("value")
 
-    val output2 = nullChecker(input2, NullFormat("value"))
+    val output2 = nullChecker(input2, NullFormat("value", List("", " ")))
 
     assertDataFrameEquals(output2, expectedOutput2)
 
@@ -45,7 +45,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput3 = sc.parallelize(List((null,null), ("b1","b2"), ("c1","c2"))).toDF("key","value")
 
-    val output3 = nullChecker(nullChecker(input3, NullFormat("value")), NullFormat("key"))
+    val output3 = nullChecker(nullChecker(input3, NullFormat("value", List("", " "))), NullFormat("key", List("", " ")))
 
     assertDataFrameEquals(output3, expectedOutput3)
 
@@ -53,7 +53,7 @@ class NullCheckerTest extends FunSuite with DataFrameSuiteBase {
 
     val expectedOutput4 = sc.parallelize(List((null,"a2"), ("b1",null), ("c1","c2"))).toDF("key","value")
 
-    val output4 = nullChecker(nullChecker(input4, NullFormat("value")), NullFormat("key"))
+    val output4 = nullChecker(nullChecker(input4, NullFormat("value", List("", " "))), NullFormat("key", List("", " ")))
 
     assertDataFrameEquals(output4, expectedOutput4)
 

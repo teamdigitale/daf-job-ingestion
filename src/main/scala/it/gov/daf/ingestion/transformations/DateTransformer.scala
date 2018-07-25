@@ -16,6 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
+import scala.util.Try
 import com.typesafe.config.Config
 import java.text.SimpleDateFormat
 import org.apache.spark.sql.types.TimestampType
@@ -52,20 +53,20 @@ object DateTransformer {
       dates.headOption
     }
 
+
     def transformDate: String => Timestamp = { dateField =>
 
-      val date: Option[JDate] = colFormat.sourceDateFormat.map{ format =>
-        new SimpleDateFormat(format).parse(dateField)
-      }.orElse(inferDate(dateField))
+      val date: Option[JDate] = colFormat.sourceDateFormat match {
+        case ""     => inferDate(dateField)
+        case format => Try(new SimpleDateFormat(format).parse(dateField)).toOption
+      }
 
-      // date.map(d => new Timestamp(d.getTime).toString).getOrElse("")
       date.map(d => new Timestamp(d.getTime)).getOrElse(new Timestamp(0))
     }
 
-
     val timeUdf = udf(transformDate, TimestampType)
 
-    val dateAdded = data.withColumn(s"${colAdded}$colName", date_format(timeUdf(col(colName)), "YYYY-MM-DD hh:mm:ss"))
+    val dateAdded = data.withColumn(s"${colAdded}$colName", date_format(timeUdf(col(colName)), "yyyy-MM-dd hh:mm:ss"))
 
     dateAdded.withColumn(s"${colAdded}year_$colName", year(col(s"${colAdded}$colName")))
       .withColumn(s"${colAdded}month_$colName", month(col(s"${colAdded}$colName")))

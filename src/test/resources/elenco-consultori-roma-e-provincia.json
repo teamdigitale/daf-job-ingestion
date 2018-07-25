@@ -1,0 +1,267 @@
+{
+    "dataschema": {
+      "avro": {
+        "name": "elenco-consultori-roma-e-provincia",
+        "type": "record",
+        "namespace": "daf://comune_roma/ECON/elenco-consultori-roma-e-provincia",
+        "aliases": [
+          "elenco-consultori-roma-e-provincia"
+        ],
+        "fields": [
+          {
+            "name": "﻿\"ASL\"",
+            "type": "string"
+          },
+          {
+            "name": "MUNICIPIO",
+            "type": "string"
+          },
+          {
+            "name": "INDIRIZZO",
+            "type": "string"
+          },
+          {
+            "name": "CAP",
+            "type": "int"
+          },
+          {
+            "name": "COMUNE",
+            "type": "string"
+          },
+          {
+            "name": "TELEFONO",
+            "type": "string"
+          },
+          {
+            "name": "FAX",
+            "type": "string"
+          },
+          {
+            "name": "NOTE",
+            "type": "string"
+          }
+        ]
+      },
+      "flatSchema": [
+        {
+          "name": "﻿\"ASL\"",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "MUNICIPIO",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "INDIRIZZO",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "CAP",
+          "type": "int",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "COMUNE",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "TELEFONO",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "FAX",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        },
+        {
+          "name": "NOTE",
+          "type": "string",
+          "metadata": {
+            "semantics": {
+              "id": "",
+              "context": ""
+            },
+            "desc": "",
+            "tag": [],
+            "field_type": "",
+            "constr": [
+              {
+                "type": "",
+                "param": ""
+              }
+            ],
+            "required": 0,
+            "cat": ""
+          }
+        }
+      ],
+      "kyloSchema": "{\"name\":null,\"description\":null,\"charset\":\"UTF-8\",\"properties\":{},\"fields\":[{\"sampleValues\":[\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\",\"Roma A\"],\"name\":\"﻿\\\"ASL\\\"\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"I Municipio\",\"I Municipio\",\"II Municipio\",\"II Municipio\",\"II Municipio\",\"III Municipio\",\"III Municipio\",\"IV Municipio\",\"IV Municipio\"],\"name\":\"MUNICIPIO\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"Nuovo Regina Margherita\",\"Via S.M. Battaglia 16\",\"Via Salaria 140\",\"Via Atto Tigri 3/5\",\"Via Garigliano 55\",\"L.go degli Osci 22\",\"Via Boemondo 21\",\"V. Dina Galli 3\",\"Largo Rovani 5\"],\"name\":\"INDIRIZZO\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"00153\",\"00185\",\"00198\",\"00197\",\"00198\",\"00185\",\"00162\",\"00139\",\"00137\"],\"name\":\"CAP\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"int\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":true,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"int\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"Roma\",\"Roma\",\"Roma\",\"Roma\",\"Roma\",\"Roma\",\"Roma\",\"Roma\",\"Roma\"],\"name\":\"COMUNE\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"0636261\",\"0677305505-0677306027\",\"068559976\",\"0677307730\",\"0677302629-0677302623\",\"0677307724\",\"0684483405-0684483401-0684483436\",\"0677304611\",\"0677304846\"],\"name\":\"TELEFONO\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"name\":\"FAX\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"},{\"sampleValues\":[\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"name\":\"NOTE\",\"description\":\"\",\"nativeDataType\":null,\"derivedDataType\":\"string\",\"primaryKey\":false,\"nullable\":true,\"modifiable\":true,\"dataTypeDescriptor\":{\"numeric\":false,\"date\":false,\"complex\":false},\"updatedTracker\":false,\"precisionScale\":null,\"createdTracker\":false,\"tags\":null,\"dataTypeWithPrecisionAndScale\":\"string\",\"descriptionWithoutNewLines\":\"\"}],\"schemaName\":null,\"databaseName\":null,\"hiveFormat\":\"ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'\\n WITH SERDEPROPERTIES ( 'separatorChar' = ',' ,'escapeChar' = '\\\\\\\\' ,'quoteChar' = '\\\\\\\"') STORED AS TEXTFILE\",\"structured\":false,\"id\":\"e09a5636-c3bd-43dd-84f9-7202573181f1\"}"
+    },
+    "operational": {
+      "dataset_type": "batch",
+      "read_type": "update",
+      "is_std": false,
+      "logical_uri": "daf://dataset/comune_roma/ENER/policy/elenco-consultori-roma-e-provincia",
+      "theme": "ENER",
+      "subtheme": "policy",
+      "group_own": "romolo",
+      "storage_info": {
+        "hdfs": {
+          "name": "hdfs_daf"
+        }
+      },
+      "physical_uri": "/daf/comune_roma/ENER/policy/elenco-consultori-roma-e-provincia",
+      "input_src": {
+        "sftp": [
+          {
+            "name": "sftp_local"
+          }
+        ]
+      }
+    },
+    "dcatapit": {
+      "name": "elenco-consultori-roma-e-provincia",
+      "notes": "elenco-consultori-roma-e-provincia",
+      "relationships_as_object": [],
+      "holder_identifier": "comune_roma",
+      "identifier": "elenco-consultori-roma-e-provincia",
+      "tags": [
+        {
+          "name": "ECON",
+          "state": "active",
+          "display_name": "ECON",
+          "id": "f5feb374-3e24-417a-969e-17f00d7e6458"
+        }
+      ],
+      "groups": [],
+      "modified": "23/07/2017",
+      "privatex": true,
+      "alternate_identifier": "elenco-consultori-roma-e-provincia",
+      "relationships_as_subject": [],
+      "holder_name": "comune_roma",
+      "publisher_identifier": "comune_roma",
+      "resources": [],
+      "frequency": "unknown",
+      "title": "elenco-consultori-roma-e-provincia",
+      "owner_org": "comune_roma",
+      "theme": "ECON",
+      "publisher_name": "comune_roma"
+    }
+  }

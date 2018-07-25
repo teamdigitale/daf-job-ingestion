@@ -103,13 +103,14 @@ resolvers ++= Seq(
 
 
 libraryDependencies ++= List(
-  "it.gov.daf" %% "daf-catalog-manager-client" % Versions.dafCatalogVersion exclude("com.fasterxml.jackson.core", "jackson-databind"),
+  // "it.gov.daf" %% "daf-catalog-manager-client" % Versions.dafCatalogVersion exclude("com.fasterxml.jackson.core", "jackson-databind"),
   // "it.gov.daf" %% "common" % Versions.dafCommonVersion,
   "com.github.pureconfig" %% "pureconfig" % pureconfigVersion,
   "com.typesafe" % "config" % "1.3.1",
   "org.typelevel" %% "frameless-cats"      % framelessVersion,
   "org.typelevel" %% "frameless-dataset"   % framelessVersion,
   "org.typelevel" %% "frameless-ml"      % framelessVersion,
+  "io.netty" % "netty-all" % "4.0.54.Final",
   "com.joestelmach" % "natty" % "0.13",
   "com.holdenkarau" %% "spark-testing-base" % "2.2.0_0.8.0" % "test",
   "org.apache.spark" %% "spark-hive"       % "2.2.0" % "test")

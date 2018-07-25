@@ -17,48 +17,62 @@
 package it.gov.daf.ingestion.client
 
 import java.net.URLEncoder
-import play.api.libs.ws.WSClient
-import play.api.libs.ws.ahc.AhcWSClient
-import it.gov.daf.catalogmanager.MetaCatalog
-import it.gov.daf.catalogmanager.client.Catalog_managerClient
+// import play.api.libs.ws.WSClient
+// import play.api.libs.ws.ahc.AhcWSClient
+import com.softwaremill.sttp.asynchttpclient.monix._
+import com.softwaremill.sttp._
+import com.softwaremill.sttp.circe._
+import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._
+import io.circe.Error
+import it.gov.daf.catalog_manager.yaml.MetaCatalog
 import scala.concurrent.{ Future, ExecutionContext }
 import it.gov.daf.ingestion.services._
 import cats._,cats.data._
 import monix.eval.Task
 
+import it.gov.daf.ingestion.model._
+
 object CatalogClient {
 
-    import akka.actor.ActorSystem
-    import akka.stream.ActorMaterializer
-    implicit val system: ActorSystem = ActorSystem()
-    implicit val materializer: ActorMaterializer = ActorMaterializer()
+  type CatalogService = Service[MetaCatalog]
 
-    implicit val ws: WSClient = AhcWSClient()
+  // import akka.actor.ActorSystem
+    // import akka.stream.ActorMaterializer
+    // implicit val system: ActorSystem = ActorSystem()
+    // implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  def apply(auth: String, uriCatalogManager: String) = {
-    lazy val catalogManagerClient = new Catalog_managerClient(ws)(uriCatalogManager)
-    new CatalogClient(auth, catalogManagerClient)
+    // implicit val ws: WSClient = AhcWSClient()
+
+  def apply(auth: User, uriCatalogManager: String) = {
+    lazy val catalogManagerClient = new CatalogClient(auth, uriCatalogManager)
+    catalogManagerClient
   }
 
 
 }
 
-class CatalogClient private (auth: String, catalogManagerClient: Catalog_managerClient) {
+class CatalogClient private (user: User, uriCatalogManager: String) {
   import CatalogClient._
 
-  def getCatalog(logicalUri: String): Future[MetaCatalog] = {
+  implicit val sttpAuth: PartialRequest[String, Nothing] = sttp.auth.basic(user.login, user.password)
+
+  def getCatalog(logicalUri: String): CatalogService = {
     //Anytime the param is a uri, you need to run this
     val logicalUriEncoded = URLEncoder.encode(logicalUri, "UTF-8")
+
+    val dsUri = s"$uriCatalogManager/$logicalUriEncoded"
 
     // TODO The following auth (test:test) is for calling a test catalog manager
     // val testAuth ="Basic YWxlOmFsZQ=="
 
-    catalogManagerClient.datasetcatalogbyid(auth, logicalUriEncoded)
+    // catalogManagerClient.datasetcatalogbyid(auth, logicalUriEncoded)
+    serviceGet(uri"$dsUri")
+
   }
 
   // I know: this name is ugly...
-  def askCatalog(logicalUri: String)(implicit ec: ExecutionContext): Service[MetaCatalog] =
-    future2Task(getCatalog(logicalUri))
+  // def askCatalog(logicalUri: String)(implicit ec: ExecutionContext): Service[MetaCatalog] =
+  //   future2Task(getCatalog(logicalUri))
 
 
 }
