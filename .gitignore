@@ -7,3 +7,4 @@ target
 /src/main/resources/data_std_test_2/
 /src/main/resources/output/
 .DS_Store
+.idea/
