@@ -16,14 +16,14 @@
 
 package it.gov.daf.ingestion
 
-import play.api.libs.ws.WSClient
-import play.api.libs.ws.ahc.AhcWSClient
+// import play.api.libs.ws.WSClient
+// import play.api.libs.ws.ahc.AhcWSClient
 import monix.execution.Scheduler.Implicits.global
 import pureconfig.loadConfig
 import com.typesafe.config.ConfigFactory
-import cats.data.EitherT._
 import cats._,cats.data._
 import cats.implicits._
+import cats.data.EitherT._
 import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
 import io.circe.parser.decode
 import org.apache.spark.sql.SparkSession
@@ -34,13 +34,12 @@ import monix.eval.Task
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.model._
 import it.gov.daf.ingestion.client.CatalogClient
-import it.gov.daf.ingestion.client.CatalogCaller._
-import it.gov.daf.catalogmanager.MetaCatalog
+import it.gov.daf.ingestion.client.CatalogCaller
+import it.gov.daf.catalog_manager.yaml.MetaCatalog
 import it.gov.daf.ingestion.PipelineBuilder._
+import client._
 
 object Ingestion {
-
-  type Ingestion[A] = EitherT[Task, IngestionError, A]
 
   implicit val spark = SparkSession
     .builder
@@ -52,17 +51,27 @@ object Ingestion {
     s"$pre/final$post"
   }
 
-
-  def ingest(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
-
+  def transform(data: DataFrame, pipeline: Pipeline): Either[IngestionError, DataFrame] = {
+    println(pipeline)
     val allTransformations = getTransformations(ConfigFactory.load)
 
     val transformations: List[Transformation] =
-      rawSaver +: commonTransformation +: pipeline.steps.sortBy(_.priority).map(s =>
-        allTransformations(s.name).transform(s.stepDetails))
+      rawSaver +:
+    codecTransformation(pipeline.encoding) +:
+    commonTransformation +:
+    pipeline.steps.sortBy(_.priority).map(s =>
+      allTransformations(s.name).transform(s.stepDetails))
 
+    println(transformations.length)
     transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(data)
   }
+
+  def standardize(dsUri: String)(implicit catalog: CatalogBuilder): Ingestion[(DataFrame, String)] = for {
+    dataCatalog  <- catalog(dsUri)
+    pipeline     <- buildPipeline(dataCatalog)
+    data         =  spark.read.parquet(pipeline.datasetPath).cache
+    transformed  <- fromEither[Task](transform(data, pipeline))
+  } yield (transformed, outputUri(pipeline.datasetPath))
 
   def main(args: Array[String]) = {
 
@@ -70,6 +79,8 @@ object Ingestion {
     import spark.sqlContext.implicits._
 
     import monix.eval.Task
+
+    implicit val catalog: CatalogBuilder = CatalogCaller.catalog _
 
     // TBD This will be the result of conversion from logical to physical URI
     val dsUri = args(0)
@@ -89,21 +100,10 @@ object Ingestion {
     )).toDF("key","value")
     /******************************/
 
-
-    def transf(catalog: MetaCatalog): Either[IngestionError,(DataFrame, String)] = for {
-      pipeline <- buildPipeline(catalog)
-      data = spark.read.parquet(pipeline.datasetPath).cache
-      transfom <- ingest(data, pipeline)
-    } yield (transfom, outputUri(pipeline.datasetPath))
-
-    val transformed: Ingestion[(DataFrame, String)] =
-      catalog(dsUri) >>= { cat => fromEither[Task](transf(cat)) }
-
-    transformed.value.foreach {_.fold(
+    standardize(dsUri).value.foreach {_.fold(
       l => println(s"left: $l"),
       r => r._1.write.format("parquet").save(r._2)
-    )
-    }
+    )}
 
     spark.stop()
   }

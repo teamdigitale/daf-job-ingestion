@@ -16,71 +16,79 @@
 
 package it.gov.daf.ingestion
 
-import it.gov.daf.catalogmanager._
-import it.gov.daf.ingestion.model._
 import cats._,cats.data._
 import cats.implicits._
-// import it.gov.daf.common.utils._
+import cats.data.EitherT._
+import cats.mtl.implicits._
+import monix.eval.Task
+
+import it.gov.daf.catalog_manager.yaml.{ Semantic, MetaCatalog, FormatStd, KeyValue, KeyValues }
+import model._
+import utilities._
+import client._
+// import client.CatalogCaller._
+// import it.gov.daf.ingestion.client.CatalogCallerMock._
 
 object PipelineBuilder {
 
-  def buildPipeline(catalog: MetaCatalog): Either[IngestionError, Pipeline] = {
-    val op = catalog.operational
-    // TODO Check metacalog schema for ingestion_pipeline
-    val transformations: List[String] =  op.ingestion_pipeline.getOrElse(Nil)
-    val schema: List[FlatSchema] = catalog.dataschema.flatSchema
-    val typedColumns: List[(String, Option[FormatStd])] = schema.map { s =>
-      val fieldType = s.metadata >>= (_.format_std)
-      (s.name, fieldType)
+  private def vocInfo(sem: Semantic)(implicit catalog: CatalogBuilder): Ingestion[VocInfo] = {
+    for {
+      vocUri     <- sem.uri_voc ||> CatalogError("Url not found in vocabulary metadata")
+      vocCatalog <- catalog(vocUri)
+      uri        <- vocCatalog.operational.physical_uri ||> CatalogError("Physical uri not found in vocabulary metadata")
+      hierarchy  <- (sem.uri_property >>= DataCatalog(vocCatalog).hierarchy) ||> CatalogError("Hierarchy not found in vocabulary metadata")
+    } yield {
+      VocInfo(uri, hierarchy)
     }
-    val semanticColumns: List[(String, Option[Semantic])] = schema.map { s =>
-      val semantics = s.metadata >>= (_.semantics)
-      (s.name, semantics)
-    }
-
-    val p: List[Option[String => StdFormat]] = schema.map { s =>
-      val colInfo: Option[String => StdFormat]  = for {
-        meta      <- s.metadata
-        sem       <- meta.semantics
-        vocUri    <- sem.uri_voc
-        vocProp   <- sem.uri_property
-        hierarchy <- sem.property_hierarchy
-        colGroup  <- sem.field_group
-      } yield {
-        vocPath => StdFormat(s.name, StdColInfo(vocUri, vocPath, vocProp, hierarchy, colGroup))
-      }
-      colInfo
-    }
-
-    def colInfo(sem: Semantic): Option[StdColInfo] =  {
-      val colInfo: Option[StdColInfo]  = for {
-        vocUri    <- sem.uri_voc
-        vocProp   <- sem.uri_property
-        hierarchy <- sem.property_hierarchy
-        colGroup  <- sem.field_group
-      } yield {
-        StdColInfo(vocUri, physicalUri(vocUri
-        ), vocProp, hierarchy, colGroup)
-      }
-      colInfo
-    }
-
-    val steps: Steps = transformations.collect {
-      case "date to ISO8601" => IngestionStep("date to ISO8601", 1, typedColumns.collect {
-        case (name, Some(FormatStd("date", format))) => DateFormat(name, format)
-      })
-      case "url normalizer" => IngestionStep("url normalizer", 1, typedColumns.collect {
-        case (name, Some(FormatStd("url", _))) => UrlFormat(name)
-      })
-      // case "standardization" => IngestionStep("standardization", 1, semanticColumns.collect {
-      //   case (name, Some(semantics)) => StdFormat(name, colInfo(semantics))
-      // })
-
-    }
-    // TODO Check metacalog schema for physical_uri
-    Right(Pipeline(op.logical_uri, op.physical_uri.getOrElse(""), steps))
-    // ???
   }
 
-  private def physicalUri(dsUri: String): String = dsUri
+  //TODO field_group is mandatory?
+  private def colInfo(sem: Semantic): VocInfo => Option[StdColInfo] =
+    vocInfo => for {
+      vocUri    <- sem.uri_voc
+      vocProp   <- sem.uri_property
+      colGroup  <- sem.field_group.orElse(Some(""))
+    } yield {
+      StdColInfo(vocUri, vocInfo.vocPath, vocProp, vocInfo.propHierarchy, colGroup)
+    }
+
+  private def stdInfo(sem: Semantic)(implicit catalog: CatalogBuilder): Ingestion[StdColInfo] = {
+    vocInfo(sem) >>= (colInfo(sem)(_) ||> CatalogError("Vocabolary info not found in dataset metadata"))
+  }
+//FormatStd(name: String, param: Option[List[KeyValue]], conv: Option[List[KeyValueArray]])
+  def buildPipeline(catalog: MetaCatalog)(implicit catalogBuilder: CatalogBuilder): Ingestion[Pipeline] = {
+
+    val cata = DataCatalog(catalog)
+    import cata._
+
+    val steps: Ingestion[Steps] = transformations.collect {
+      case "values to null" => asIngestion(IngestionStep("values to null", 1, typedColumns.collect {
+        case (name, Some(FormatStd(_, _, Some(conv)))) => conv.collect {
+          case KeyValues("null", value) => NullFormat(name, value.toList)
+        }
+      }.flatten))
+      case "date to ISO8601" => asIngestion(IngestionStep("date to ISO8601", 1, typedColumns.collect {
+        case (name, Some(FormatStd(_, Some(params), _))) => params.collect {
+          case KeyValue("format", format) => DateFormat(name, format)
+        }
+      }.flatten))
+      case "url normalizer" => asIngestion(IngestionStep("url normalizer", 1, typedColumns.collect {
+        case (name, Some(FormatStd(_, Some(params), _))) => params.collect {
+          case KeyValue("uri", _) => UrlFormat(name)
+        }
+      }.flatten))
+      case "address normalizer" => asIngestion(IngestionStep("address normalizer", 1, typedColumns.collect {
+        case (name, Some(FormatStd("address", _, _))) => AddressFormat(name)
+        }))
+      case "standardization" =>
+        val formats = semanticColumns.collect {
+          case (name, sema@Some(Semantic(_, _, _, _, _, _, Some(uri_voc), _, _, Some(uri_property), _))) => stdInfo(sema.get).map(StdFormat(name, _))}.sequence
+        formats.map(IngestionStep("standardization", 1, _))
+      case err =>  fromEither[Task](Left(CatalogError(s"Wrong pipeline step [$err] in catalog")): Either[IngestionError, IngestionStep])
+    }.sequence
+
+    // physical_uri is optional hor historical reason
+    steps.map( s => Pipeline(op.logical_uri, op.physical_uri.getOrElse(""), dataschema.encoding, s))
+  }
+
 }

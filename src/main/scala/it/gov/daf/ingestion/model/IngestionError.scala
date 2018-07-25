@@ -30,6 +30,8 @@ case class ConfigError(configError: ConfigReaderFailures) extends IngestionError
 
 case class AuthenticationError(error: String) extends IngestionError
 
+case class CatalogError(error: String) extends IngestionError
+
 sealed trait ServiceError extends IngestionError
 
 case class EndpointError(error: String) extends ServiceError

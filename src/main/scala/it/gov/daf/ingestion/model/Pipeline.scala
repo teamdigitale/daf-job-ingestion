@@ -16,7 +16,9 @@
 
 package it.gov.daf.ingestion.model
 
-import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
+// import io.circe.generic.extras._, io.circe.syntax._, io.circe.generic.auto._, io.circe._
+
+case class VocInfo(vocPath: String, propHierarchy: List[String])
 
 case class StdColInfo(vocUri: String, vocPath: String, vocProp: String, propHierarchy: List[String], colGroup: String) extends Serializable
 
@@ -25,15 +27,16 @@ sealed trait Format extends Product with Serializable {
 }
 
 case class StdFormat(column: String, colInfo: StdColInfo) extends Format
-case class DateFormat(column: String, sourceDateFormat: Option[String]) extends Format
+case class DateFormat(column: String, sourceDateFormat: String) extends Format
 case class UrlFormat(column: String) extends Format
 case class AddressFormat(column: String) extends Format
 case class CodecFormat(column: String, sourceEncoding: Option[String]) extends Format
-case class NullFormat(column: String) extends Format
+case class NullFormat(column: String, nullConventions: List[String]) extends Format
 
 case class IngestionStep(name: String, priority: Int, stepDetails: List[Format])
 
-case class Pipeline(datasetName: String, datasetPath: String, steps: Steps)
+case class Pipeline(datasetName: String, datasetPath: String, encoding: Option[String], steps: Steps)
+
 
 // Sample value
 

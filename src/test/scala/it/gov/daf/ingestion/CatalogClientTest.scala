@@ -17,6 +17,8 @@
 package it.gov.daf.ingestion
 
 import scala.io.Source
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import pureconfig.loadConfig
 import pureconfig.error.ConfigReaderFailures
 import monix.execution.Scheduler.Implicits.global
@@ -33,70 +35,26 @@ import monix.eval.Task
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.model._
 import it.gov.daf.ingestion.client.CatalogClient
-// import it.gov.daf.ingestion.client.CatalogCaller._
+import it.gov.daf.ingestion.client.CatalogCaller._
 import it.gov.daf.ingestion.client.CatalogCallerMock._
 import it.gov.daf.ingestion.utilities._
-import it.gov.daf.catalogmanager.MetaCatalog
+import it.gov.daf.catalog_manager.yaml.MetaCatalog
 import scala.util.{Success, Failure}
 
 class CatalogClientTest extends FunSuite {
 
+  // This test needs a working catalog-manager defined in configuration
   test("catalog test") {
 
     val dsUri="daf://dataset/ord/ale.ercolani/default_org/TRAN/terrestre/carsharing_entity_vehicle"
 
-    val catalogFromResource: Either[IngestionError, MetaCatalog] =
-      decode[MetaCatalog](Source.fromURL(getClass.getClassLoader.getResource("carsharing_entity_vehicle.json")).mkString).leftMap(ResponseError(_))
+    val transformedFromService: EitherT[Task,IngestionError, MetaCatalog] = catalogFromResource(dsUri)
 
-    val transformedFromService: EitherT[Task,IngestionError, MetaCatalog] = catalog(dsUri)
-
-    val transformed: EitherT[Task,IngestionError, MetaCatalog] =
-      EitherT.fromEither[Task](catalogFromResource)
-
-    import scala.concurrent.Await
-    import scala.concurrent.duration._
-
-    val task = transformed.value
-    // val completed = for (r <- task) { println(r) }
-
-    // Await.result(completed, 3.seconds)
-
-    // Works for value read from config
-    // task.runAsync.foreach { result => println(result) }
-
-
-    // val compl = transformedFromService.value.runAsync
-    // val compl = transformedFromService.value.runAsync
+    val transformedFromResource: EitherT[Task,IngestionError, MetaCatalog] = catalogFromResource(dsUri)
 
     val resultFS = Await.result(transformedFromService.value.runAsync, 10.seconds)
-    val result   = Await.result(transformed.value.runAsync, 10.seconds)
+    val result   = Await.result(transformedFromResource.value.runAsync, 10.seconds)
 
-
-    // println(result)
-    // transformedFromService.value.runAsync.foreach { result => println(result) }
-
-
-    // val pp: Nothing = transformedFromService.value.runAsync
-
-    // transformedFromService.value.runOnComplete { result =>
-    //   println(result)
-
-    //   result match {
-    //     case Success(value) =>
-    //       println(value)
-    //     case Failure(ex) =>
-    //       System.err.println(s"ERROR: ${ex.getMessage}")
-    //   }
-    // }
-
-    //   runAsync.foreach {_.fold (
-    //   l => println(s"left: $l"),
-    //   r => println(s"right: $r")
-    // )
-
-
-  // }
-    // assert("true" === "true")
     assert(result == resultFS)
 
   }

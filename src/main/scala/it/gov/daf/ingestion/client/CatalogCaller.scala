@@ -26,7 +26,8 @@ import monix.execution.Scheduler.Implicits.global
 
 import it.gov.daf.ingestion.utilities._
 import it.gov.daf.ingestion.model._
-import it.gov.daf.catalogmanager.MetaCatalog
+import it.gov.daf.catalog_manager.yaml.MetaCatalog
+import it.gov.daf.ingestion._
 
 object CatalogCaller {
 
@@ -37,12 +38,12 @@ object CatalogCaller {
         config <- servicesConfig
         user   <- userConfig
       } yield {
-        CatalogClient(user2auth(user), config.catalogManagerUrl)
+        CatalogClient(user, config.catalogManagerUrl)
       }
 
-  def catalog(dsUri: String): EitherT[Task, IngestionError, MetaCatalog] = for {
+  def catalog(dsUri: String): Ingestion[MetaCatalog] = for {
       client <- fromEither[Task](catalogClient)
-      catalog <- client.askCatalog(dsUri).leftWiden
+      catalog <- client.getCatalog(dsUri).leftWiden
     } yield catalog
 
 }

@@ -25,21 +25,24 @@ import cats.data.EitherT._
 import monix.eval.Task
 
 import it.gov.daf.ingestion.model._
-import it.gov.daf.catalogmanager.MetaCatalog
+import it.gov.daf.catalog_manager.yaml.MetaCatalog
 
 object CatalogCallerMock {
 
-  def catalog(dsUri: String): EitherT[Task, IngestionError, MetaCatalog] = {
-
-    val catalogFromResource = decode[MetaCatalog](Source.fromURL(getClass.getClassLoader.getResource(dsMap(dsUri))).mkString).leftMap(ResponseError(_))
-      EitherT.fromEither[Task](catalogFromResource)
-
-    // ???
-  }
-
   private val dsMap = Map (
     "daf://dataset/ord/ale.ercolani/default_org/TRAN/terrestre/carsharing_entity_vehicle" ->
-      "carsharing_entity_vehicle.json"
+      "carsharing_entity_vehicle.json",
+    "daf://voc/ECON__impresa_contabilita/ds_aziende" ->
+      "ds_aziende.json",
+    "daf://voc/REGI__europa/voc_territorial_classification" ->
+      "voc_territorial_classification.json",
+    "daf://voc/TECH__scienza/voc_licenze" ->
+      "voc_licenze.json"
   )
+
+  def localCatalog(fileName: String) = decode[MetaCatalog](Source.fromURL(getClass.getClassLoader.getResource(fileName)).mkString).leftMap(ResponseError(_))
+
+  def catalogFromResource(dsUri: String): EitherT[Task, IngestionError, MetaCatalog] =
+    EitherT.fromEither[Task](localCatalog(dsMap(dsUri)))
 
 }

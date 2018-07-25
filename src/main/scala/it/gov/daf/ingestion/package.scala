@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package it.gov.daf.ingestion.transformations
+package it.gov.daf
 
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.DataFrame
+import cats._,cats.data._
+import cats.implicits._
+import cats.data.EitherT._
+import monix.eval.Task
 
+import it.gov.daf.ingestion.model._
+import it.gov.daf.ingestion.client.CatalogClient
 
-object RawSaver {
+package object ingestion {
 
-  def rawSaver1: Transformation = {
-      // def transform(formats: List[Format])
-      // (implicit spark: SparkSession): Transformation = { data =>
-
-      //   data.withColumn(colName, colFormat.encoding.fold(col(colName)) (enc => encode(decode(col(colName), enc), "UTF-8")))
-
-      //   val res: DataFrame = formats.foldLeft(data)(normalizer.apply)
+  type Ingestion[A] = EitherT[Task, IngestionError, A]
 
 
-  ???
-  }
-
-
+  case class Context(catalogClient: CatalogClient)
 }

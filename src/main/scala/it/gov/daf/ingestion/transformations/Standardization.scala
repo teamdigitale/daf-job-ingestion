@@ -16,7 +16,7 @@
 
 package it.gov.daf.ingestion.transformations
 
-import com.typesafe.config.Config
+// import com.typesafe.config.Config
 import org.apache.spark.sql.SparkSession
 
 import scala.language.postfixOps
@@ -54,7 +54,13 @@ object Standardization extends Transformer[StdFormat] {
     //get list of tuple (stringIn, stringTrans, score)
 
     val scorList = voc.map(x=> (stringIn, x, editDist(stringIn, x))).sortBy(_._3)
-    scorList(0)
+    scorList.length match {
+      case 0 =>
+        println(s"stringIn: $stringIn")
+        (stringIn, "astringsocomplexthelevenshteindistanceis9999", 9999)
+      case _ => scorList(0)
+    }
+    // scorList(0)
 
   }
 
@@ -76,9 +82,6 @@ object Standardization extends Transformer[StdFormat] {
 
     println("Std - transform")
 
-
-    //import spark.implicits._
-
     //Calculate involved Vocabularies, calculate occurrencies, and remove duplicate
     val dicInvolved = stdInfoList.map(x => (x.colInfo.vocUri, x.colInfo.vocPath))
         .groupBy(x=>x).map(x=>(x._1, x._2.size))
@@ -94,10 +97,10 @@ object Standardization extends Transformer[StdFormat] {
 
     //Get the ordered list of column and info from which to start the standardization procedure
     val stdInfoListOrdered = stdInfoList.sortBy(x=> (dicInvolved((x.colInfo.vocUri, x.colInfo.vocPath)), x.colInfo.vocUri, x.colInfo.propHierarchy.size)).to[List]
-    println(s"stdInfoListOrdered: $stdInfoListOrdered")
+    // println(s"stdInfoListOrdered: $stdInfoListOrdered")
 
     def standardize(data: DataFrame, stdInfo: StdFormat): DataFrame = {
-      println("Std - standardize: " + stdInfo)
+      // println("Std - standardize: " + stdInfo)
 
       //Prepare Info needed for the procedure
 
@@ -137,46 +140,49 @@ object Standardization extends Transformer[StdFormat] {
             }
 
           }
-
+      // println(s"val colLinkedNames: $colLinkedNames")
 
       //columns to be selected from df_data (the col to be std and the correlated ones that have been already standardized)
       val colSelect_data: List[String] = colName2Std :: colLinkedNames
 
       //columns to be selected from the vocabulary
       val colSelect_voc: Columns = colSelect_data.flatMap { colName =>
-        val infoColSel: Option[StdColInfo] = stdInfoMap.get(colName)
-        infoColSel match {
-          case Some(s) => Some(s.vocProp)
-          case _ => None
-        }
+        stdInfoMap.get(colName).map(_.vocProp)
+        // val infoColSel: Option[StdColInfo] = stdInfoMap.get(colName)
+        // infoColSel.map(_.vocProp)
       }
+      println(s"val colSelect_voc: $colSelect_voc")
 
       import spark.implicits._
 
       //Create the appropriate structure for the vocabulary
-      val voc_restr = voc.map{row =>
+      val voc_restr = voc.map { row =>
         colSelect_voc.map{col =>
           row.getAs[String](col)
         }
       }
 
-
+      // println(s"voc_restr: ${voc_restr.mkString("|")}")
 
       //produce the dataframe with the result of stdInference function (standardized col + score)
       val df_conv = data.select(colSelect_data.head, colSelect_data.tail.map(addedColVal + _): _*).distinct.map { x =>
-        val xSeq: Seq[String] = x.toSeq.map(x=> x.asInstanceOf[String])
-        if (xSeq.length >1) {
-          val dataLinkedCol: Seq[String] = xSeq.tail.map(x=>x.asInstanceOf[String].toLowerCase)
-          val voc_cust = voc_restr.filter(x=> x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail.equals(dataLinkedCol)).map(x=>x(0).asInstanceOf[String])
 
-          println("colSelect_data: " + colSelect_data)
-          println("colSelect_voc: " + colSelect_voc)
-          println(voc_restr.mkString((",")))
+        val xSeq: Seq[String] = x.toSeq.map(x=> x.asInstanceOf[String])
+        println(s"xSeq: ${xSeq.mkString("|")}")
+        if (xSeq.length > 1) {
+          val dataLinkedCol: Seq[String] = xSeq.tail.map(_.toLowerCase)
+          val voc_cust = voc_restr.filter( x => x.map(_.toLowerCase).tail == dataLinkedCol).map(_.head)
+
+          // println("colSelect_data: " + colSelect_data)
+          // println("colSelect_voc: " + colSelect_voc)
+          // println(voc_restr.mkString((",")))
           println("________: " + voc_cust.mkString(","))
           //voc.map(x=> println(x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail))
           doit("levenshtein")(xSeq.head, voc_cust)
         } else {
-          val voc_cust = voc.map(x=>x(0).asInstanceOf[String])
+
+          println(s"voc length: ${voc.length}")
+          val voc_cust = voc.map(x=>x.get(0).toString)
           doit("levenshtein")(xSeq.head, voc_cust)
         }
       }

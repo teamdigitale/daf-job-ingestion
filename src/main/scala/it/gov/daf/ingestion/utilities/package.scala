@@ -19,30 +19,29 @@ package it.gov.daf.ingestion
 import cats.syntax.either._
 import scala.concurrent.{Future,Promise}
 import java.util.Base64
-import it.gov.daf.ingestion.model.User
+import cats.data.EitherT._
+import monix.eval.Task
+
+import it.gov.daf.ingestion.model.{ User, IngestionError }
 
 package object utilities {
-
-  def Either2Future[T](e: Either[Any, T]): Future[T] = {
-    val p = Promise[T]
-
-    val dummy = e match {
-      case Right(v)  => p.success(v)
-      case Left(err: Exception) => p.failure(err)
-      case Left(err) => p.failure(new Exception(err.toString))
-    }
-    p.future
-  }
-
-  def Option2Future[T](o: Option[T]): Future[T] = {
-    val p = Promise[T]
-    o.fold(p.failure(new Exception("Mandatory field missing")))(t => p.success(t)).future
-  }
 
   // TODO Move to common
   def Option2Either[L, R](t: => L)(opt: Option[R]): Either[L, R] = opt match {
     case Some(e) => Either.right(e)
     case _ => Either.left(t)
+  }
+
+  def asIngestion[A](value: A): Ingestion[A] = fromEither[Task](Right(value))
+
+  def asIngestion[R](t: => IngestionError)(value: Option[R]): Ingestion[R] = fromEither[Task](Option2Either(t)(value))
+
+  implicit class Val2Ingestion[A](value: A) {
+    def ||> = fromEither[Task](Right(value))
+  }
+
+  implicit class OptVal2Ingestion[A](value: Option[A]) {
+    def ||>(t: => IngestionError) =  fromEither[Task](Option2Either(t)(value))
   }
 
   def user2auth(user: User) = {

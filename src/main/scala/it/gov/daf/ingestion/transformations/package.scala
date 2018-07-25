@@ -48,9 +48,6 @@ package object transformations {
   type Transformation = DataFrame => TransformationResult
 
   type DataTransformation[A] = (DataFrame, A) => DataFrame
-  // type DataTransformation = (DataFrame, Format) => DataFrame
-
-  // type Transformations = Map[String, Transformer]
 
   val rawSaver: Transformation  =  { data =>
     Right(data.columns.foldLeft(data)( (data, colName) =>
@@ -63,14 +60,19 @@ package object transformations {
       .withColumn("__dtupdate", col("__dtcreated")))
   }
 
+  def codecTransformation(encoding: Option[String]): Transformation  =  { data =>
+    Right(data.columns.foldLeft(data)( (data, colName) =>
+       data.withColumn(colName, encoding.fold(col(colName)) (enc => decode(encode(col(colName), enc), "UTF-8")))))
+  }
+
+  // TODO This is no more used. Evaluate if delete it or reintroduce it
   val nullChecker = { (data: DataFrame, colFormat: NullFormat) =>
     val colName = colFormat.column
     data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
   }
 
   def getTransformations(implicit config: Config) : Map[String, Transformer[Format]] = Map(
-    "text to utf-8" -> codecTransformer,
-    "empty values to null" -> nullTransformer,
+    "values to null" -> nullTransformer,
     "date to ISO8601" -> dateTransformer,
     "url normalizer" -> urlTransformer,
     "address normalizer" -> addressTransformer,

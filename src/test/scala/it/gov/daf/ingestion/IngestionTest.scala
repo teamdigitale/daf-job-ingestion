@@ -18,14 +18,16 @@ package it.gov.daf.ingestion
 
 import org.scalatest.FunSuite
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import it.gov.daf.ingestion.transformations._
 import it.gov.daf.ingestion.transformations.DateTransformer._
 import java.sql.{Date, Timestamp}
-import Ingestion._
+import Ingestion.transform
 import cats._,cats.data._
 import cats.implicits._
 import it.gov.daf.ingestion.model.{ NullFormat, DateFormat }
 import com.typesafe.config.Config
+import utilities.MockData._
 
 class IngestionTest extends FunSuite with DataFrameSuiteBase {
 
@@ -37,22 +39,36 @@ class IngestionTest extends FunSuite with DataFrameSuiteBase {
 
     implicit val config: Config = null
 
-    val input1 = sc.parallelize(List(
-      ("",  "2015-01-01 00:00:00"),
-      ("b1","2016-01-01 00:00:00"),
-      ("c1","2017-01-01 00:00:00")
-    )).toDF("key","value")
+    val data = spark.read.format("csv")
+      .option("header", "true")
+      .option("delimiter", ";")
+      .option("inferSchema", "true")
+      .load("src/test/resources/dataset_test_overall.csv")
 
-    val transformations: List[Transformation] =
-      List(GenericTransformer[NullFormat](nullChecker).transform(List(NullFormat("key")))
-        , dateTransformer.transform(List(DateFormat("value", None)))
-      )
-    /*_*/
-    val output1 = transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(input1)
+    // val dsUri = "daf://voc/ECON__impresa_contabilita/ds_aziende"
+    // val pipelineTask = CatalogCallerMock.catalogFromResource(dsUri).flatMap(buildPipeline(_))
+    // val pipeline = Await.result(pipelineTask.value.runAsync, 10.seconds)
 
-    output1.foreach(_.collect.foreach(println))
 
-    assertDataFrameEquals(input1, input1)
+    val transformed = transform(data, expectedPipeline)
+    // TODO change nullChecker
+    // val transformations: List[Transformation] =
+    //   List(GenericTransformer[NullFormat](nullChecker).transform(List(NullFormat("key")))
+    //     , dateTransformer.transform(List(DateFormat("value", None)))
+    //   )
+    // /*_*/
+    // val output1 = transformations.map(Kleisli(_)).reduceLeft(_.andThen(_)).apply(input1)
+
+    // output1.foreach(_.collect.foreach(println))
+    // transformed.prins
+    // transformed.foreach(p => println(p.collect))
+    transformed.foreach(p => p.printSchema)
+    val pp = transformed.map(_.collect)
+    // pp.foreach(a => println(a.toList.mkString("|")))
+    transformed.foreach(_.write.mode(SaveMode.Overwrite).save("src/test/resources/output"))
+
+    assert(true == true)
+    // assertDataFrameEquals(input1, input1)
 
   }
 

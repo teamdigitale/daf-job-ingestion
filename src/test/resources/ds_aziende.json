@@ -1,0 +1,586 @@
+{
+    "dataschema": {
+        "avro": {
+            "name": "ds_aziende",
+            "type": "record",
+            "namespace": "daf://daf_data/ECON/ds_aziende",
+            "alliases": [
+                "voc_licenze"
+            ],
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "integer"
+                },
+                {
+                    "name": "nome",
+                    "type": "string"
+                },
+                {
+                    "name": "indirizzo_sede1",
+                    "type": "string"
+                },
+                {
+                    "name": "citta_sede1",
+                    "type": "string"
+                },
+                {
+                    "name": "provincia_sede1",
+                    "type": "string"
+                },
+                {
+                    "name": "regione_sede1",
+                    "type": "string"
+                },
+                {
+                    "name": "indirizzo_sede2",
+                    "type": "string"
+                },
+                {
+                    "name": "citta_sede2",
+                    "type": "string"
+                },
+                {
+                    "name": "provincia_sede2",
+                    "type": "string"
+                },
+                {
+                    "name": "regione_sede2",
+                    "type": "string"
+                },
+                {
+                    "name": "data_costituzione",
+                    "type": "string"
+                },
+                {
+                    "name": "sito",
+                    "type": "string"
+                },
+                {
+                    "name": "licenza_label_1",
+                    "type": "string"
+                },
+                {
+                    "name": "licenza_label_2",
+                    "type": "string"
+                },
+                {
+                    "name": "fatturato",
+                    "type": "double"
+                }
+            ]
+        },
+        "flatSchema": [
+            {
+                "name": "id",
+                "type": "integer",
+                "metadata": {
+                    "title": "id",
+                    "desc": "ID univoco record",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false
+                }
+            },
+            {
+                "name": "nome",
+                "type": "string",
+                "metadata": {
+                    "title": "Denominazione impresa",
+                    "desc": "Denominazione sociale dell'impresa.",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "ECON",
+                    "tag": [
+                        "impresa",
+                        "azienda",
+                        "nome"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": ""
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "indirizzo_sede1",
+                "type": "string",
+                "metadata": {
+                    "title": "Indirizzo sede principale",
+                    "desc": "Indirizzo della sede principale dell'azienda.",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "indirizzo",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "field_group": "sede1"
+                    },
+                    "format_std": {
+                        "name": "address",
+                        "conv": [
+                            {
+                                "key": "null",
+                                "value": [
+                                    "",
+                                    " "
+                                ]
+                            }
+                        ]
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "citta_sede1",
+                "type": "string",
+                "metadata": {
+                    "title": "Citta sede 1",
+                    "desc": "Città dove l'azienda ha la sua sede principale",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "citta",
+                        "city",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_italiano",
+                        "field_group": "sede1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "provincia_sede1",
+                "type": "string",
+                "metadata": {
+                    "title": "Provincia sede 1",
+                    "desc": "Provincia dove l'azienda ha la sua sede principale",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "provincia",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_provincia",
+                        "field_group": "sede1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "regione_sede1",
+                "type": "string",
+                "metadata": {
+                    "title": "Regione sede 1",
+                    "desc": "Regione dove è ubicata la sede 1 dell'impresa",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "regione",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_regione",
+                        "field_group": "sede1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "indirizzo_sede2",
+                "type": "string",
+                "metadata": {
+                    "title": "Indirizzo sede secondaria",
+                    "desc": "Indirizzo della sede secondaria dell'azienda.",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "indirizzo",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "field_group": "sede2"
+                    },
+                    "format_std": {
+                        "name": "address",
+                        "conv": [
+                            {
+                                "key": "null",
+                                "value": [
+                                    "",
+                                    " "
+                                ]
+                            }
+                        ]
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "citta_sede2",
+                "type": "string",
+                "metadata": {
+                    "title": "Citta sede 2",
+                    "desc": "Città dove l'azienda ha la sua sede secondaria",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "citta",
+                        "city",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_italiano",
+                        "field_group": "sede2"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "provincia_sede2",
+                "type": "string",
+                "metadata": {
+                    "title": "Provincia sede 2",
+                    "desc": "Provincia dove l'azienda ha la sua sede secondaria",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "provincia",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_provincia",
+                        "field_group": "sede1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "regione_sede2",
+                "type": "string",
+                "metadata": {
+                    "title": "Regione sede 2",
+                    "desc": "Regione dove è ubicata la sede 2 dell'impresa",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "regione",
+                        "sede legale",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/REGI__europa/voc_territorial_classification",
+                        "uri_property": "Denominazione_regione",
+                       "field_group": "sede1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "data_costituzione",
+                "type": "string",
+                "metadata": {
+                    "title": "Data Costituzione",
+                    "desc": "Data di costituzione della società",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "data costituzione",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": ""
+                    },
+                    "format_std": {
+                        "name": "date",
+                        "param": [
+                            {
+                                "key": "format",
+                                "value": "dd/MM/yyyy"
+                            }
+                        ],
+                        "conv": [
+                            {
+                                "key": "null",
+                                "value": [
+                                    "",
+                                    " "
+                                ]
+                            }
+                        ]
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "sito",
+                "type": "string",
+                "metadata": {
+                    "title": "Sito Azienda",
+                    "desc": "Url sito internet dell'Azienda",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "REGI",
+                    "tag": [
+                        "sito",
+                        "web",
+                        "url",
+                        "impresa"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": ""
+                    },
+                    "format_std": {
+                        "name": "date",
+                        "param": [
+                            {
+                                "key": "uri",
+                                "value": ""
+                            }
+                        ],
+                        "conv": [
+                            {
+                                "key": "null",
+                                "value": [
+                                    "",
+                                    " "
+                                ]
+                            }
+                        ]
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "licenza_label_1",
+                "type": "string",
+                "metadata": {
+                    "title": "Nome licenza di primo livello",
+                    "desc": "Nome della licenza di primo livello",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "TECH",
+                    "tag": [
+                        "licenze",
+                        "label"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/TECH__scienza/voc_licenze",
+                        "uri_property": "label_level_1"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "licenza_label_2",
+                "type": "string",
+                "metadata": {
+                    "title": "Nome licenza di secondo livello",
+                    "desc": "Nome della licenza di secondo livello",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "TECH",
+                    "tag": [
+                        "licenze",
+                        "label"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": "",
+                        "uri_voc": "daf://voc/TECH__scienza/voc_licenze",
+                        "uri_property": "label_level_2"
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            },
+            {
+                "name": "fatturato",
+                "type": "integer",
+                "metadata": {
+                    "title": "Fatturato",
+                    "desc": "Fatturato dell'impresa ultimo Denominazione_italiano",
+                    "field_type": "des",
+                    "required": 1,
+                    "uniq_dim": false,
+                    "cat": "ECON",
+                    "tag": [
+                        "fatturato"
+                    ],
+                    "semantics": {
+                        "id": "",
+                        "context": ""
+                    },
+                    "field_profile": {
+                        "is_index": true,
+                        "is_profile": true
+                    }
+                }
+            }
+        ]
+    },
+    "operational": {
+        "georef": null,
+        "logical_uri": "daf://voc/ECON__impresa_contabilita/ds_aziende",
+        "physical_uri": "/daf/voc/ECON__impresa_contabilita/ds_aziende",
+        "input_src": {
+            "sftp": [
+                {
+                    "name": "sftp_local",
+                    "param": "format=csv",
+                    "url": "/home/d_raf/ECON/impresa_contabilita/ds_aziende",
+                    "password": null
+                }
+            ]
+        },
+        "theme": "ECON",
+        "subtheme": "impresa_contabilita",
+        "read_type": "update",
+        "dataset_type": "batch",
+        "storage_info": {
+            "hdfs": {
+                "name": "hdfs_daf"
+            }
+        },
+        "std_schema": null,
+        "is_std": false,
+        "group_own": "d_raf",
+        "ingestion_pipeline": [
+            "values to null",
+            "date to ISO8601",
+            "url normalizer",
+            "address normalizer",
+            "standardization"
+        ]
+    },
+    "dcatapit": {
+        "name": "ds_aziende",
+        "notes": "Dataset Aziende",
+        "organization": null,
+        "author": null,
+        "license_id": null,
+        "relationships_as_object": [],
+        "holder_identifier": "daf_data",
+        "identifier": "ds_aziende",
+        "license_title": "Altro (Non Commerciale)",
+        "tags": [
+            {
+                "name": "ECON",
+                "state": "active",
+                "vocabulary_id": null,
+                "display_name": "Economia",
+                "id": "f5feb374-3e24-417a-969e-17f00d7e6458"
+            }
+        ],
+        "groups": [],
+        "modified": "2017-07-23",
+        "privatex": true,
+        "alternate_identifier": "ds_aziende",
+        "relationships_as_subject": [],
+        "holder_name": "daf_data",
+        "publisher_identifier": "daf_data",
+        "resources": [],
+        "frequency": "unknown",
+        "title": "Dataset delle imprese",
+        "owner_org": "daf_data",
+        "theme": "ECON",
+        "publisher_name": "daf_data"
+    }
+}

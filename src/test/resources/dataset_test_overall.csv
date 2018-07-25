@@ -1,0 +1,25 @@
+id;nome;indirizzo_sede1;citta_sede1;provincia_sede1;regione_sede1;indirizzo_sede2;citta_sede2;provincia_sede2;regione_sede2;data_costituzione;sito;licenza_label_1;licenza_label_2;fatturato
+1;Comp 1;via Imbrecciato 94, 00141, Roma;Roma;Roma;Lazio;via ciambella 3, 00145, Pozzuoli;Pozzuoli;Napoli;Campania;12/02/2009;www.comp1.com;Licenza Aperta;Dominio pubblico;2
+2;Comp 2;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;www.comp2.com;Licenza Aperta;Attribuzione;3
+3;Comp 3;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Non Aperta;Solo uso non commerciale;44
+4;Comp 4;via Imbrecciato 94, 70213 Bari;Bari;Bari;Puglia;via ciambella 3, 00145, Napoli;Napoli;Napoli;Campania;12/02/2009;http://www.comp4.com;Licenza Non Aperta;Solo uso non commerciale;
+5;Comp 5;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;;https://www.comp2.com;Licenza sconosciuta;Licenza sconosciuta;556
+6;Comp 6;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Aperta;Dominio pubblico;76
+7;Comp 7;via Imbrecciato 94, 00141, Roma;Roma;Roma;Lazio;via ciambella 3, 00145, Pozzuoli;Pozzuoli;Napoli;Campania;12/02/2009;www.comp1.com;Licenza Aperta;Attribuzione;67
+8;Comp 8;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;www.comp2.com;Licenza Non Aperta;Solo uso non commerciale;4
+9;Comp 9;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Non Aperta;Solo uso non commerciale;
+10;Comp 10;via Imbrecciato 94, 70213 Bari;Bari;Bari;Puglia;via ciambella 3, 00145, Napoli;Napoli;Napoli;Campania;12/02/2009;http://www.comp4.com;Licenza sconosciuta;Licenza sconosciuta;232
+11;Comp 11;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;https://www.comp2.com;Licenza Aperta;Dominio pubblico;5
+12;Comp 12;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Aperta;Attribuzione;
+13;Comp 13;via Imbrecciato 94, 00141, Roma;Roma;Roma;Lazio;via ciambella 3, 00145, Pozzuoli;Pozzuoli;Napoli;Campania;12/02/2009;www.comp1.com;Licenza Non Aperta;Solo uso non commerciale;6
+14;Comp 14;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;www.comp2.com;Licenza Non Aperta;Solo uso non commerciale;2
+15;Comp 15;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza sconosciuta;Licenza sconosciuta;3
+16;Comp 16;via Imbrecciato 94, 70213 Bari;Bari;Bari;Puglia;via ciambella 3, 00145, Napoli;Napoli;Napoli;Campania;12/02/2009;http://www.comp4.com;Licenza Aperta;Dominio pubblico;44
+17;Comp 17;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;https://www.comp2.com;Licenza Aperta;Attribuzione;
+18;Comp 18;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;;comp3.com;Licenza Non Aperta;Solo uso non commerciale;556
+19;Comp 19;via Imbrecciato 94, 00141, Roma;Roma;Roma;Lazio;via ciambella 3, 00145, Pozzuoli;Pozzuoli;Napoli;Campania;12/02/2009;www.comp1.com;Licenza Non Aperta;Solo uso non commerciale;76
+20;Comp 20;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;www.comp2.com;Licenza sconosciuta;Licenza sconosciuta;67
+21;Comp 21;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Aperta;Dominio pubblico;4
+22;Comp 22;via Imbrecciato 94, 70213 Bari;Bari;Bari;Puglia;via ciambella 3, 00145, Napoli;Napoli;Napoli;Campania;12/02/2009;http://www.comp4.com;Licenza Aperta;Attribuzione;
+23;Comp 23;via Italia 94, 00142, Roma;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo;Bari;Puglia;12/03/2018;https://www.comp2.com;Licenza Non Aperta;Solo uso non commerciale;232
+24;Comp 24;;Roma;Roma;Lazio;via po 3, 00145, Santeramo;Santeramo in Colle;Bari;Puglia;12/03/2018;comp3.com;Licenza Non Aperta;Solo uso non commerciale;5

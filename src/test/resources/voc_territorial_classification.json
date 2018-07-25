@@ -1,0 +1,991 @@
+{
+  "dataschema": {
+    "avro": {
+      "name": "voc_territorial_classification",
+      "type": "record",
+      "namespace": "daf://daf_data/TECH/voc_territorial_classification",
+      "alliases": [
+        "voc_territorial_classification"
+      ],
+      "fields": [
+        {
+          "name": "Codice_Regione",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Citta_Metropolitana",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Provincia",
+          "type": "integer"
+        },
+        {
+          "name": "Progressivo_Comune",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Comune_formato_alfanumerico",
+          "type": "integer"
+        },
+        {
+          "name": "Denominazione_italiano",
+          "type": "string"
+        },
+        {
+          "name": "Denominazione_tedesco",
+          "type": "string"
+        },
+        {
+          "name": "Codice_Ripartizione_Geografica",
+          "type": "integer"
+        },
+        {
+          "name": "Ripartizione_geografica",
+          "type": "string"
+        },
+        {
+          "name": "Denominazione_regione",
+          "type": "string"
+        },
+        {
+          "name": "Denominazione_Citta_metropolitana",
+          "type": "string"
+        },
+        {
+          "name": "Denominazione_provincia",
+          "type": "string"
+        },
+        {
+          "name": "Flag_Comune_capoluogo_provincia",
+          "type": "string"
+        },
+        {
+          "name": "Sigla_automobilistica",
+          "type": "string"
+        },
+        {
+          "name": "Codice_Comune_formato_numerico",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Comune_numerico__110_province_2010_2016",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Comune_numerico_107_province_2006_2009",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Comune_numerico_103_province_1995_2005",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_Catastale_comune",
+          "type": "string"
+        },
+        {
+          "name": "Popolazione_legale_2011",
+          "type": "integer"
+        },
+        {
+          "name": "Codice_NUTS1_2010",
+          "type": "string"
+        },
+        {
+          "name": "Codice_NUTS2_2010",
+          "type": "string"
+        },
+        {
+          "name": "Codice_NUTS3_2010",
+          "type": "string"
+        },
+        {
+          "name": "Codice_NUTS1_2006",
+          "type": "string"
+        },
+        {
+          "name": "Codice_NUTS2_2006",
+          "type": "string"
+        },
+        {
+          "name": "Codice_NUTS3_2006",
+          "type": "string"
+        }
+      ]
+    },
+    "flatSchema": [
+      {
+        "name": "Codice_Regione",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice Regione",
+          "desc": "ID univoco di regione",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "regioni"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Citta_Metropolitana",
+        "type": "string",
+        "metadata": {
+          "title": "Codice Città Metropolitana",
+          "desc": "ID univoco di città metropolitane",
+          "field_type": "dim",
+          "required": 0,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "citta metropolitana"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Provincia",
+        "type": "string",
+        "metadata": {
+          "title": "Codice Provincia",
+          "desc": "ID univoco della provincia",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "provincia"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Provincia",
+        "type": "string",
+        "metadata": {
+          "title": "Codice Provincia",
+          "desc": "ID univoco della provincia",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "provincia"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Progressivo_Comune",
+        "type": "integer",
+        "metadata": {
+          "title": "Progressivo Comune",
+          "desc": "Numero progressivo associato al comune",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "progressivo",
+            "comune"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Comune_formato_alfanumerico",
+        "type": "string",
+        "metadata": {
+          "title": "Codice alfanumerico Comune",
+          "desc": "Codice alfanumerico univoco del Comune",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "codice alfanumerico",
+            "comune"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Denominazione_italiano",
+        "type": "string",
+        "metadata": {
+          "title": "Denominazione Comune Ita",
+          "desc": "Denominazione del Comune in Italiano",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "denominazione",
+            "comune",
+            "ita"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Denominazione_tedesco",
+        "type": "string",
+        "metadata": {
+          "title": "Denominazione Comune Ger",
+          "desc": "Denominazione del Comune in Tedesco",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "denominazione",
+            "comune",
+            "ger"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Ripartizione_Geografica",
+        "type": "string",
+        "metadata": {
+          "title": "Codice ripartizione geografica",
+          "desc": "Codice di ripartizione geografica",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "nome",
+            "ripartizione geografica"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Ripartizione_geografica",
+        "type": "string",
+        "metadata": {
+          "title": "Nome ripartizione geografica",
+          "desc": "Nome della ripartizione geografica",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "ripartizione geografica"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Denominazione_regione",
+        "type": "string",
+        "metadata": {
+          "title": "Denominazione Regione",
+          "desc": "Denominazione della Regione",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "regione"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Denominazione_Citta_metropolitana",
+        "type": "string",
+        "metadata": {
+          "title": "Denominazione Citta Metropolitana",
+          "desc": "Denominazione della Citta Metropolitana",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "citta metropolitana"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Denominazione_provincia",
+        "type": "string",
+        "metadata": {
+          "title": "Denominazione Provincia",
+          "desc": "Denominazione della Provincia",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "label",
+            "nome",
+            "provincia"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Flag_Comune_capoluogo_provincia",
+        "type": "integer",
+        "metadata": {
+          "title": "Flag Capoluogo di Provincia",
+          "desc": "Flag Capoluogo di provincia (1 se è capoluogo)",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "flag",
+            "nome",
+            "capoluogo provincia"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Sigla_automobilistica",
+        "type": "string",
+        "metadata": {
+          "title": "Sigla automobilistica",
+          "desc": "Sigla automobilistica",
+          "field_type": "desc",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "targa",
+            "auto"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Comune_formato_numerico",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice comune numerico",
+          "desc": "Codice comune numerico",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "comune",
+            "numerico"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Comune_numerico__110_province_2010_2016",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice comune numerico 110_province_2010_2016",
+          "desc": "Codice comune numerico 110_province_2010_2016",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "comune",
+            "numerico"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Comune_numerico_107_province_2006_2009",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice comune numerico 107_province_2006_2009",
+          "desc": "Codice comune numerico 107_province_2006_2009",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "comune",
+            "numerico"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Comune_numerico_103_province_1995_2005",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice comune numerico 103_province_1995_2005",
+          "desc": "Codice comune numerico 103_province_1995_2005",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "comune",
+            "numerico"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_Catastale_comune",
+        "type": "integer",
+        "metadata": {
+          "title": "Codice catastale comune",
+          "desc": "Codice catastale del comune",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": true,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "comune",
+            "catastale",
+            "codice catastale"
+          ],
+          "semantics": {
+            "id": "",
+            "context": "",
+            "property_hierarchy": [
+              "Codice_Ripartizione_Geografica,Ripartizione_geografica",
+              "Codice_Regione,Denominazione_regione",
+              "Codice_Citta_Metropolitana,Denominazione_Citta_metropolitana",
+              "Codice_Provincia,Denominazione_provincia",
+              "Codice_Comune_formato_alfanumerico,Denominazione_italiano,Denominazione_tedesco,Codice_Comune_formato_numerico,Codice_Comune_numerico__110_province_2010_2016,Codice_Comune_numerico_107_province_2006_2009,Codice_Comune_numerico_103_province_1995_2005,Codice_Catastale_comune"
+            ]
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Popolazione_legale_2011",
+        "type": "integer",
+        "metadata": {
+          "title": "Popolazione 2011",
+          "desc": "Popolazione legale al 2011",
+          "field_type": "metric",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "valore",
+            "comune",
+            "popolazione",
+            "abitanti"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS1_2010",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS1 2010",
+          "desc": "Codice NUTS1 2010",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS2_2010",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS2 2010",
+          "desc": "Codice NUTS2 2010",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS3_2010",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS3 2010",
+          "desc": "Codice NUTS3 2010",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS1_2006",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS1 2006",
+          "desc": "Codice NUTS1 2006",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS2_2006",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS2 2006",
+          "desc": "Codice NUTS2 2006",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      },
+      {
+        "name": "Codice_NUTS3_2006",
+        "type": "string",
+        "metadata": {
+          "title": "Codice NUTS3 2006",
+          "desc": "Codice NUTS3 2006",
+          "field_type": "dim",
+          "required": 1,
+          "uniq_dim": false,
+          "cat": "REGI",
+          "tag": [
+            "voc",
+            "code",
+            "NUTS"
+          ],
+          "semantics": {
+            "id": "",
+            "context": ""
+          },
+          "field_profile": {
+            "is_index": true,
+            "is_profile": true
+          }
+        }
+      }
+    ]
+  },
+  "operational": {
+    "georef": null,
+    "logical_uri": "daf://voc/REGI__europa/voc_territorial_classification",
+    "physical_uri": "/daf/voc/REGI__europa/daf_data_o_voc_territorial_classification",
+    "input_src": {
+      "sftp": [
+        {
+          "name": "sftp_local",
+          "param": "format=csv",
+          "url": "/home/d_raf/REGI/europa/voc_territorial_classification",
+          "password": null
+        }
+      ]
+    },
+    "theme": "REGI",
+    "subtheme": "europa",
+    "read_type": "update",
+    "dataset_type": "batch",
+    "storage_info": {
+      "hdfs": {
+        "name": "hdfs_daf"
+      }
+    },
+    "std_schema": null,
+    "is_std": false,
+    "group_own": "d_raf",
+    "ingestion_pipeline": [
+      "pipeline1",
+      "pipeline2"
+    ]
+  },
+  "dcatapit": {
+    "name": "voc_territorial_classification",
+    "notes": "territorial vocabulary",
+    "organization": null,
+    "author": null,
+    "license_id": null,
+    "relationships_as_object": [],
+    "holder_identifier": "daf_data",
+    "identifier": "voc_territorial_classification",
+    "license_title": "Altro (Non Commerciale)",
+    "tags": [
+      {
+        "name": "REGI",
+        "state": "active",
+        "vocabulary_id": null,
+        "display_name": "Regional",
+        "id": "f5feb374-3e24-417a-969e-17f00d7e6458"
+      }
+    ],
+    "groups": [],
+    "modified": "2017-07-23",
+    "privatex": true,
+    "alternate_identifier": "voc_territorial_classification",
+    "relationships_as_subject": [],
+    "holder_name": "daf_data",
+    "publisher_identifier": "daf_data",
+    "resources": [],
+    "frequency": "unknown",
+    "title": "Vocabolario delle classificazioni territoriali",
+    "owner_org": "daf_data",
+    "theme": "REGI",
+    "publisher_name": "daf_data"
+  }
+}

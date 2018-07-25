@@ -37,11 +37,10 @@ object NullChecker {
   def nullTransformer// (implicit config: Config)
   = GenericTransformer[NullFormat](nullFormatter)
 
-  private def nullFormatter(data: DataFrame, colFormat: Format)  = {
+  private def nullFormatter(data: DataFrame, colFormat: NullFormat)  = {
     val colName = colFormat.column
 
-    data.withColumn(colName, when(col(colName) === "", null).otherwise(col(colName)))
-    // data.withColumn(s"${colAdded}$colName", date_format(timeUdf(col(colName)), "YYYY-MM-DD hh:mm:ss"))
+    data.withColumn(s"${colAdded}$colName", when(col(colName).isin(colFormat.nullConventions: _*), null).otherwise(col(colName)))
   }
 
 }
