@@ -119,10 +119,11 @@ object Standardization extends Transformer[StdFormat] {
       //Get the involved vocabulary
       val voc = vocs.value(stdInfo.colInfo.vocUri)
 
+
       //Transform this in Map for easiest use in the procedure
       val stdInfoMap = stdInfoListOrdered.map(x => (x.column -> x.colInfo)).toMap
 
-      //Get the list of columns that have been already standardized and are in ther hierarchy of the element we want to standardize
+      //Get the list of columns that have been already standardized and are in the hierarchy of the element we want to standardize
       val colLinkedNames: List[String] =
         data.columns
           .filter(x => x.startsWith(addedColVal))
@@ -140,7 +141,6 @@ object Standardization extends Transformer[StdFormat] {
             }
 
           }
-      // println(s"val colLinkedNames: $colLinkedNames")
 
       //columns to be selected from df_data (the col to be std and the correlated ones that have been already standardized)
       val colSelect_data: List[String] = colName2Std :: colLinkedNames
@@ -151,39 +151,35 @@ object Standardization extends Transformer[StdFormat] {
         // val infoColSel: Option[StdColInfo] = stdInfoMap.get(colName)
         // infoColSel.map(_.vocProp)
       }
-      println(s"val colSelect_voc: $colSelect_voc")
 
       import spark.implicits._
 
       //Create the appropriate structure for the vocabulary
-      val voc_restr = voc.map { row =>
+      val voc_restr: Array[List[String]] = voc.map { row =>
         colSelect_voc.map{col =>
           row.getAs[String](col)
         }
       }
 
-      // println(s"voc_restr: ${voc_restr.mkString("|")}")
 
       //produce the dataframe with the result of stdInference function (standardized col + score)
       val df_conv = data.select(colSelect_data.head, colSelect_data.tail.map(addedColVal + _): _*).distinct.map { x =>
 
         val xSeq: Seq[String] = x.toSeq.map(x=> x.asInstanceOf[String])
-        println(s"xSeq: ${xSeq.mkString("|")}")
+        //println(s"xSeq: ${xSeq.mkString("|")}")
+
+
         if (xSeq.length > 1) {
+
           val dataLinkedCol: Seq[String] = xSeq.tail.map(_.toLowerCase)
           val voc_cust = voc_restr.filter( x => x.map(_.toLowerCase).tail == dataLinkedCol).map(_.head)
-
-          // println("colSelect_data: " + colSelect_data)
-          // println("colSelect_voc: " + colSelect_voc)
-          // println(voc_restr.mkString((",")))
-          println("________: " + voc_cust.mkString(","))
-          //voc.map(x=> println(x.toSeq.map(x=>x.asInstanceOf[String].toLowerCase).tail))
           doit("levenshtein")(xSeq.head, voc_cust)
+
         } else {
 
-          println(s"voc length: ${voc.length}")
-          val voc_cust = voc.map(x=>x.get(0).toString)
+          val voc_cust = voc_restr.map(x=>x(0).toString)
           doit("levenshtein")(xSeq.head, voc_cust)
+
         }
       }
 
