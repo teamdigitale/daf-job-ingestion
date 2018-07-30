@@ -20,7 +20,10 @@ package it.gov.daf.ingestion.model
 
 case class VocInfo(vocPath: String, propHierarchy: List[String])
 
-case class StdColInfo(vocUri: String, vocPath: String, vocProp: String, propHierarchy: List[String], colGroup: String) extends Serializable
+case class StdColInfo(vocUri: String, vocPath: String, vocProp: String, propHierarchy: List[String], colGroup: String) extends Serializable {
+  override def toString =
+    s"""StdColInfo("vocUri=$vocUri, vocPath=$vocPath, vocProp=$vocProp propHierarchy=List(${propHierarchy.mkString("|")}), colGroup=$colGroup)"""
+}
 
 sealed trait Format extends Product with Serializable {
   def column: String
@@ -36,17 +39,3 @@ case class NullFormat(column: String, nullConventions: List[String]) extends For
 case class IngestionStep(name: String, priority: Int, stepDetails: List[Format])
 
 case class Pipeline(datasetName: String, datasetPath: String, encoding: Option[String], steps: Steps)
-
-
-// Sample value
-
-// val pipeline = Pipeline(datasetName = "data_std_test_2",
-//   datasetPath = "src/main/resources/data_std_test_2/",
-//   steps = List(IngestionStep(priority = 1, name = "standardization",
-//     stepDetails = List(
-//       StdFormat(column = "licenza_code_1",
-//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences")),
-//       StdFormat(column = "licenza_code_2",
-//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences")),
-//       StdFormat(column = "licenza_code_3",
-//         colInfo = StdColInfo(vocUri = "daf://voc/TECH__scienza/voc_licenze", vocPath = "src/main/resources/licences/", vocProp = "code_level_1", propHierarchy = List("code_level_1,label_level_1"), colGroup = "licences"))))))
